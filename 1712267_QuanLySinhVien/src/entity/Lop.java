@@ -2,24 +2,37 @@ package entity;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
-@Entity(name = "lop")
+@Entity
+@Table(name = "lop")
 public class Lop {
+
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "lop_no")
 	private int _lopNo;
-	@NotBlank(message = "Chưa có tên lớp!")
+
+	@Column(name = "ma_lop")
+	@NotBlank(message = "Chưa có mã lớp!")
 	private String _maLop;
+
+	@Column(name = "ten_lop")
 	private String _tenLop;
+	@Column(name = "mieu_ta")
 	private String _mieuTa;
 
-	@OneToMany(mappedBy = "lop", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "lop_sinhvien", fetch = FetchType.LAZY)
 	private List<SinhVien> sinhViens;
-	
+
 	public Lop() {
 
 	}

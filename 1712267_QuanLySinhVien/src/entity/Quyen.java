@@ -1,9 +1,30 @@
 package entity;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "quyen")
 public class Quyen {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ma_quyen")
 	private int _quyenNo;
+	@Column(name = "ten_quyen")
 	private String _tenQuyen;
+	@Column(name = "mieu_ta")
 	private String _mieuTa;
+
+	@OneToMany(mappedBy = "quyen_sinhvien", fetch = FetchType.LAZY)
+	private List<SinhVien> sinhViens;
 
 	public Quyen() {
 
@@ -39,6 +60,5 @@ public class Quyen {
 	public void set_mieuTa(String _mieuTa) {
 		this._mieuTa = _mieuTa;
 	}
-	
-	
+
 }

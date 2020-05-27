@@ -10,7 +10,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
-import entity.FileParser;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import constants.AlertConstants;
+import dao.QuyenDao;
+import entity.Quyen;
+import entity.SinhVien;
+import util.FileParser;
+import util.HibernateUtil;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -19,12 +27,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.File;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.BorderLayout;
+import java.awt.Button;
 
 public class LecturerDashBoard extends JFrame {
 
@@ -59,12 +70,43 @@ public class LecturerDashBoard extends JFrame {
 //				Home home = new Home();
 //				genericStuff.call_frame(home);
 				JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-				int results = fileChooser.showSaveDialog(null);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Only", "csv");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-separated Values", "csv");
 				fileChooser.setFileFilter(filter);
-				if(results == JFileChooser.APPROVE_OPTION) {
+				fileChooser.setCurrentDirectory(new File("."));
+				fileChooser.setDialogTitle("Chọn File CSV");
+
+				int results = fileChooser.showSaveDialog(null);
+
+				if (results == JFileChooser.APPROVE_OPTION) {
 					FileParser fileParser = new FileParser();
-					fileParser.readFromCSV(fileChooser.getSelectedFile().getAbsolutePath());
+					List<SinhVien> list_sinhVien = fileParser
+							.readFromCSV(fileChooser.getSelectedFile().getAbsolutePath());
+					for (SinhVien sv : list_sinhVien) {
+						System.out.println("MSSV: " + sv.get_mssv());
+						System.out.println("CMND: " + sv.get_cmnd());
+						System.out.println("Tên: " + sv.get_ten());
+						System.out.println("Giới tính: " + sv.get_gioiTinh());
+					}
+
+					try {
+						SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+						Session session = sessionFactory.openSession();
+						
+						QuyenDao quyenDao = new QuyenDao();
+						List<Quyen> list_quyen = quyenDao.findAll();
+						
+						for (Quyen item : list_quyen) {
+							System.out.println(item.get_tenQuyen());
+						}
+						
+						session.close();
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					LecturerDashBoard frame = new LecturerDashBoard();
+					genericStuff.call_frame(frame);
 				}
 			}
 		});
@@ -114,6 +156,34 @@ public class LecturerDashBoard extends JFrame {
 		lblheWhoFights.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblheWhoFights.setBounds(272, 81, 270, 40);
 		panel_2.add(lblheWhoFights);
+
+		Button minimize = new Button("-");
+		minimize.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				setState(JFrame.ICONIFIED);
+			}
+		});
+		minimize.setForeground(Color.WHITE);
+		minimize.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		minimize.setBackground(Color.GRAY);
+		minimize.setBounds(690, 0, 30, 25);
+		panel_2.add(minimize);
+
+		Button exit = new Button("X");
+		exit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// "/resources/GoodBye.gif"
+				AlertDialog alert = new AlertDialog(AlertConstants.LEAVING_SO_SOON, AlertConstants.GOODBYE);
+				genericStuff.call_frame(alert);
+			}
+		});
+		exit.setForeground(Color.WHITE);
+		exit.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		exit.setBackground(Color.GRAY);
+		exit.setBounds(720, 0, 30, 25);
+		panel_2.add(exit);
 
 		JPanel panel_3 = new JPanel();
 		panel_3.setBackground(Color.LIGHT_GRAY);

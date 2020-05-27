@@ -30,7 +30,7 @@ public class Home extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private AlertDialog alertDialog;
-	private GenericStuff genericStuff;
+	private GenericStuff genericStuff = new GenericStuff();
 	private JTextField textLoginName;
 	private JPasswordField passwordLoginPassword;
 
@@ -71,7 +71,8 @@ public class Home extends JFrame {
 		exit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				System.exit(0);
+				AlertDialog alert = new AlertDialog(AlertConstants.LEAVING_SO_SOON, AlertConstants.GOODBYE);
+				genericStuff.call_frame(alert);
 			}
 		});
 		exit.setForeground(Color.WHITE);
@@ -214,21 +215,26 @@ public class Home extends JFrame {
 	}
 
 	public void login(String userName, String password) {
-		// Lấy người dùng dưới DB lên từ đây và so sánh các kiểu
-		String hashed = BCrypt.hashpw("123456", BCrypt.gensalt(12));
-		boolean pass = BCrypt.checkpw(password, hashed);
-		if (pass) {
+		// Người dùng để trống
+		if (userName.isEmpty() || password.isEmpty()) {
 			dispose();
-			LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
+			alertDialog = new AlertDialog(AlertConstants.BLANK_FIELD_WARNING, AlertConstants.BLANK_WRONG_FIELD_PATH);
 			genericStuff = new GenericStuff();
-			genericStuff.call_frame(lecturerDashBoard);
-		} else {
-			dispose();
-			// Người dùng để trống
-			if (userName.isEmpty() || password.isEmpty()) {
-				alertDialog = new AlertDialog(AlertConstants.BLANK_FIELD_WARNING);
+			genericStuff.call_frame(alertDialog);
+		}
+
+		else {
+			// Lấy người dùng dưới DB lên từ đây và so sánh các kiểu
+			String hashed = BCrypt.hashpw("123456", BCrypt.gensalt(12));
+			boolean pass = BCrypt.checkpw(password, hashed);
+			if (pass) {
+				dispose();
+				LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
 				genericStuff = new GenericStuff();
-				genericStuff.call_frame(alertDialog);
+				genericStuff.call_frame(lecturerDashBoard);
+			} else {
+
+				// Sai mật khẩu
 			}
 		}
 	}

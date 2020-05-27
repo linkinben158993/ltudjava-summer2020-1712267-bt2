@@ -10,43 +10,29 @@ import javax.transaction.Transactional;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import entity.Quyen;
-import entity.SinhVien;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
-public class SinhVienDao {
-	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-
-	public void insert(SinhVien sinhVien) {
-		Session session = sessionFactory.openSession();
-		try {
-			Transaction trans = session.beginTransaction();
-			session.saveOrUpdate(sinhVien);
-			trans.commit();
-		}
-		catch (HibernateException e) {
-			e.printStackTrace();
-		}
-		session.close();
-	}
+public class QuyenDao {
 	
+	private static final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<SinhVien> findAll() {
+	public List<Quyen> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(SinhVien.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(Quyen.class);
 
-			Root<SinhVien> root = (Root<SinhVien>) query.from(SinhVien.class);
+			Root<Quyen> root = (Root<Quyen>) query.from(Quyen.class);
 
 			query.select(root);
 
-			Query<SinhVien> list = session.createQuery(query);
+			Query<Quyen> list = session.createQuery(query);
 
 			return list.getResultList();
 

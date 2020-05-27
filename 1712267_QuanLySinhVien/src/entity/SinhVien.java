@@ -1,26 +1,55 @@
 package entity;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+@Entity
+@Table(name = "sinhvien")
 public class SinhVien {
-	private int _svNo;
-	private String _mssv;
-	private String _ten;
-	private String _gioiTinh;
-	private String _cmnd;
-	private Quyen _quyen;
 
-	@Column(name = "lop_no")
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "sinhvien_no")
+	private int _svNo;
+	@Column(name = "ma_sinhvien")
+	private String _mssv;
+	@Column(name = "ten_sinhvien")
+	private String _ten;
+	@Column(name = "gioitinh_sinhvien")
+	private String _gioiTinh;
+	@Column(name = "cmnd_sinhvien")
+	private String _cmnd;
+
+	@Column(name = "ma_quyen")
+	@NotBlank(message = "Vui lòng chọn quyền!")
+	private int ma_quyen;
+
+	@ManyToOne()
+	@JoinColumn(name = "quyen_no", insertable = false, updatable = false, nullable = true)
+	private Quyen quyen_sinhvien;
+
+	@Column(name = "malop_sinhvien")
 	@NotBlank(message = "Vui lòng chọn mã lớp!")
-	private int ma_lop;
-	
-	
+	private String ma_lop;
+
 	@ManyToOne()
 	@JoinColumn(name = "ma_lop", insertable = false, updatable = false, nullable = true)
-	private Lop _lop;
+	private Lop lop_sinhvien;
+
+	public int getMa_quyen() {
+		return ma_quyen;
+	}
+
+	public void setMa_quyen(int ma_quyen) {
+		this.ma_quyen = ma_quyen;
+	}
 
 	public SinhVien() {
 
@@ -74,26 +103,28 @@ public class SinhVien {
 		this._cmnd = _cmnd;
 	}
 
-	public Quyen get_quyen() {
-		return _quyen;
+	public Quyen get_quyen_sinhvien() {
+		return quyen_sinhvien;
 	}
 
-	public void set_quyen(Quyen _quyen) {
-		this._quyen = _quyen;
+	public void set_quyen_sinhvien(Quyen quyen_sinhvien) {
+		this.quyen_sinhvien = quyen_sinhvien;
 	}
-	public int getMa_lop() {
+
+	public String getMa_lop() {
 		return ma_lop;
 	}
 
-	public void setMa_lop(int ma_lop) {
+	public void setMa_lop(String ma_lop) {
 		this.ma_lop = ma_lop;
 	}
-	public Lop get_lop() {
-		return _lop;
+
+	public Lop get_lop_sinhvien() {
+		return lop_sinhvien;
 	}
 
-	public void set_lop(Lop _lop) {
-		this._lop = _lop;
+	public void set_lop_sinhvien(Lop lop_sinhvien) {
+		this.lop_sinhvien = lop_sinhvien;
 	}
 
 }

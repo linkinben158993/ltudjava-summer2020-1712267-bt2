@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//src/constants/AlertConstants.java=UTF-8
 encoding//src/entity/Lop.java=UTF-8
 encoding//src/entity/SinhVien.java=UTF-8
+encoding//src/util/FileParser.java=UTF-8
 encoding//src/views/AlertDialog.java=UTF-8
 encoding//src/views/Home.java=UTF-8
 encoding//src/views/LecturerDashBoard.java=UTF-8
