@@ -9,6 +9,9 @@ import javax.swing.border.EmptyBorder;
 import org.mindrot.jbcrypt.BCrypt;
 
 import constants.AlertConstants;
+import dao.SinhVienDao;
+import entity.SinhVien;
+import views.lecturer.LecturerDashBoard;
 
 import java.awt.Color;
 import java.awt.Button;
@@ -24,8 +27,9 @@ import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 
-public class Home extends JFrame {
+public class Login extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -43,7 +47,7 @@ public class Home extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Home frame = new Home();
+					Login frame = new Login();
 					frame.setLocationRelativeTo(null);
 					frame.setUndecorated(true);
 					frame.setVisible(true);
@@ -141,7 +145,7 @@ public class Home extends JFrame {
 		panel.add(lblNewLabel);
 
 		// Resize
-		ImageIcon imgIcon = new ImageIcon(Home.class.getResource("/resources/Sholom.jpg"));
+		ImageIcon imgIcon = new ImageIcon(Login.class.getResource("/resources/images/Sholom.jpg"));
 		Image image = imgIcon.getImage();
 		Image newImage = image.getScaledInstance(435, 360, java.awt.Image.SCALE_SMOOTH);
 		label.setIcon(new ImageIcon(newImage));
@@ -188,7 +192,7 @@ public class Home extends JFrame {
 		event_listener();
 	}
 
-	public Home() {
+	public Login() {
 		// Khởi tạo các thành phần cần thiết
 		init();
 
@@ -218,23 +222,44 @@ public class Home extends JFrame {
 		// Người dùng để trống
 		if (userName.isEmpty() || password.isEmpty()) {
 			dispose();
-			alertDialog = new AlertDialog(AlertConstants.BLANK_FIELD_WARNING, AlertConstants.BLANK_WRONG_FIELD_PATH);
+			alertDialog = new AlertDialog(AlertConstants.BLANK_FIELD_WARNING,
+					AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
 			genericStuff = new GenericStuff();
 			genericStuff.call_frame(alertDialog);
 		}
 
 		else {
 			// Lấy người dùng dưới DB lên từ đây và so sánh các kiểu
-			String hashed = BCrypt.hashpw("123456", BCrypt.gensalt(12));
-			boolean pass = BCrypt.checkpw(password, hashed);
-			if (pass) {
+			SinhVienDao sinhVienDao = new SinhVienDao();
+			SinhVien sinhVien = new SinhVien();
+			sinhVien.set_mssv(userName);
+			sinhVien.set_password(password);
+			List<SinhVien> sinhViens = sinhVienDao.findAll();
+
+			SinhVien found = new SinhVien();
+			found = found.findByMSSV(sinhViens, sinhVien);
+
+			if (found == null) {
 				dispose();
-				LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
+				alertDialog = new AlertDialog(AlertConstants.NOTFOUND_WARNINGS,
+						AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
 				genericStuff = new GenericStuff();
-				genericStuff.call_frame(lecturerDashBoard);
+				genericStuff.call_frame(alertDialog);
 			} else {
 
-				// Sai mật khẩu
+				System.out.println(found.get_ten());
+
+				String hashed = BCrypt.hashpw(found.get_password(), BCrypt.gensalt(12));
+				boolean pass = BCrypt.checkpw(password, hashed);
+				if (pass) {
+					System.out.println("Mật khẩu đúng!");
+					dispose();
+					LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
+					genericStuff = new GenericStuff();
+					genericStuff.call_frame(lecturerDashBoard);
+				} else {
+					System.out.println("Mật khẩu sai!");
+				}
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,14 +15,16 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "lop")
-public class Lop {
+public class Lop implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "lop_no")
 	private int _lopNo;
 
-	@Column(name = "ma_lop")
+	@Column(name = "ma_lop", length = 8, unique = true)
 	@NotBlank(message = "Chưa có mã lớp!")
 	private String _maLop;
 
@@ -74,6 +77,14 @@ public class Lop {
 
 	public void set_mieuTa(String _mieuTa) {
 		this._mieuTa = _mieuTa;
+	}
+
+	public List<SinhVien> getSinhViens() {
+		return sinhViens;
+	}
+
+	public void setSinhViens(List<SinhVien> sinhViens) {
+		this.sinhViens = sinhViens;
 	}
 
 }

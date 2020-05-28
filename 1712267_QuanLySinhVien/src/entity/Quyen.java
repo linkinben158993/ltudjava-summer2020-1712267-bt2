@@ -14,11 +14,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "quyen")
 public class Quyen {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ma_quyen")
 	private int _quyenNo;
-	@Column(name = "ten_quyen")
+
+	@Column(name = "ten_quyen", unique = true)
 	private String _tenQuyen;
 	@Column(name = "mieu_ta")
 	private String _mieuTa;
@@ -59,6 +61,14 @@ public class Quyen {
 
 	public void set_mieuTa(String _mieuTa) {
 		this._mieuTa = _mieuTa;
+	}
+
+	public List<SinhVien> getSinhViens() {
+		return sinhViens;
+	}
+
+	public void setSinhViens(List<SinhVien> sinhViens) {
+		this.sinhViens = sinhViens;
 	}
 
 }

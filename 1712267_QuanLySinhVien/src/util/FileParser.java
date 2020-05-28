@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import dao.LopDao;
 import dao.SinhVienDao;
 import entity.Lop;
@@ -52,8 +54,10 @@ public class FileParser {
 				newsinhVien.set_gioiTinh(parsedStuff.get(i)[3]);
 				newsinhVien.set_cmnd(parsedStuff.get(i)[4]);
 
-				newsinhVien.setMa_quyen(1);
-				newsinhVien.setMa_lop(lop.get_maLop());
+				newsinhVien.setMa_quyen(2);
+				newsinhVien.setMa_lop(lop.get_maLop().toString());
+
+				newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_cmnd(), BCrypt.gensalt(12)));
 
 				sinhVien.add(newsinhVien);
 
@@ -67,7 +71,6 @@ public class FileParser {
 	}
 
 	public List<Lop> readFromCSV() {
-		List<String[]> parsedStuff = new ArrayList<String[]>();
 		List<Lop> lop = new ArrayList<Lop>();
 
 		return lop;

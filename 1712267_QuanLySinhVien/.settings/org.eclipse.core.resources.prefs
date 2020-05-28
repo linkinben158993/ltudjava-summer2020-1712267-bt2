@@ -4,5 +4,5 @@ encoding//src/entity/Lop.java=UTF-8
 encoding//src/entity/SinhVien.java=UTF-8
 encoding//src/util/FileParser.java=UTF-8
 encoding//src/views/AlertDialog.java=UTF-8
-encoding//src/views/Home.java=UTF-8
-encoding//src/views/LecturerDashBoard.java=UTF-8
+encoding//src/views/Login.java=UTF-8
+encoding//src/views/lecturer/LecturerDashBoard.java=UTF-8

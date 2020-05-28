@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="C:/LinkinBen/I.T/Java/Project02/Java_Project02/1712267_QuanLySinhVien/libs/classmate-1.3.1.jar"/>
 	<classpathentry kind="lib" path="C:/LinkinBen/I.T/Java/Project02/Java_Project02/1712267_QuanLySinhVien/libs/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="C:/LinkinBen/I.T/Java/Project02/Java_Project02/1712267_QuanLySinhVien/libs/antlr-2.7.7.jar"/>
+	<classpathentry kind="lib" path="C:/LinkinBen/I.T/Java/Project02/Java_Project02/1712267_QuanLySinhVien/libs/jbcrypt-0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

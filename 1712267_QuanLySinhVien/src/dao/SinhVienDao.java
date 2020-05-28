@@ -13,7 +13,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.Quyen;
 import entity.SinhVien;
 import util.HibernateUtil;
 
@@ -27,13 +26,12 @@ public class SinhVienDao {
 			Transaction trans = session.beginTransaction();
 			session.saveOrUpdate(sinhVien);
 			trans.commit();
-		}
-		catch (HibernateException e) {
+		} catch (HibernateException e) {
 			e.printStackTrace();
 		}
 		session.close();
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<SinhVien> findAll() {
 		Session session = sessionFactory.openSession();

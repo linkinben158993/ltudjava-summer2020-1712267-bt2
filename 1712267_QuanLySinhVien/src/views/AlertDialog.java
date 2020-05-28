@@ -118,7 +118,7 @@ public class AlertDialog extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					dispose();
-					Home home = new Home();
+					Login home = new Login();
 					genericStuff.call_frame(home);
 				}
 			});

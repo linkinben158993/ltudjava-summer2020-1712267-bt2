@@ -1,4 +1,4 @@
-package views;
+package views.lecturer;
 
 import java.awt.EventQueue;
 import java.awt.Image;
@@ -19,6 +19,9 @@ import entity.Quyen;
 import entity.SinhVien;
 import util.FileParser;
 import util.HibernateUtil;
+import views.AlertDialog;
+import views.GenericStuff;
+import views.Login;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,6 +34,7 @@ import java.io.File;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.Font;
@@ -43,7 +47,7 @@ public class LecturerDashBoard extends JFrame {
 	private JPanel contentPane;
 	private GenericStuff genericStuff = new GenericStuff();
 
-	// Đang kéo thả tại tọa độ x y
+	// �?ang kéo thả tại t�?a độ x y
 	public int draggedAtX;
 	public int draggedAtY;
 
@@ -73,7 +77,7 @@ public class LecturerDashBoard extends JFrame {
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-separated Values", "csv");
 				fileChooser.setFileFilter(filter);
 				fileChooser.setCurrentDirectory(new File("."));
-				fileChooser.setDialogTitle("Chọn File CSV");
+				fileChooser.setDialogTitle("Chọn File CSV Để Thêm Mới Sinh Viên");
 
 				int results = fileChooser.showSaveDialog(null);
 
@@ -91,14 +95,17 @@ public class LecturerDashBoard extends JFrame {
 					try {
 						SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 						Session session = sessionFactory.openSession();
-						
+
 						QuyenDao quyenDao = new QuyenDao();
 						List<Quyen> list_quyen = quyenDao.findAll();
-						
+
 						for (Quyen item : list_quyen) {
 							System.out.println(item.get_tenQuyen());
+//							for (SinhVien student : item.getSinhViens()) {
+//								System.out.println(student.get_mssv());
+//							}
 						}
-						
+
 						session.close();
 
 					} catch (Exception e) {
@@ -132,7 +139,7 @@ public class LecturerDashBoard extends JFrame {
 		JLabel DashIcon = new JLabel("");
 		DashIcon.setBackground(Color.GRAY);
 		DashIcon.setHorizontalAlignment(SwingConstants.CENTER);
-		ImageIcon imgIcon_Dash = new ImageIcon(Home.class.getResource("/resources/DashBoardIcon.png"));
+		ImageIcon imgIcon_Dash = new ImageIcon(Login.class.getResource("/resources/images/DashBoardIcon.png"));
 		Image image_Dash = imgIcon_Dash.getImage();
 		Image newImage_Dash = image_Dash.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
 		DashIcon.setIcon(new ImageIcon(newImage_Dash));
@@ -185,65 +192,68 @@ public class LecturerDashBoard extends JFrame {
 		exit.setBounds(720, 0, 30, 25);
 		panel_2.add(exit);
 
-		JPanel panel_3 = new JPanel();
-		panel_3.setBackground(Color.LIGHT_GRAY);
-		panel_3.setBounds(120, 221, 100, 110);
-		panel.add(panel_3);
-		panel_3.setLayout(null);
+		JPanel panel_SinhVien = new JPanel();
+		panel_SinhVien.setBackground(Color.LIGHT_GRAY);
+		panel_SinhVien.setBounds(120, 221, 100, 110);
+		panel.add(panel_SinhVien);
+		panel_SinhVien.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Sinh Viên", SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		lblNewLabel.setBounds(0, 86, 100, 14);
-		panel_3.add(lblNewLabel);
+		JLabel lblSinhVien = new JLabel("Sinh Viên", SwingConstants.CENTER);
+		lblSinhVien.setForeground(Color.BLACK);
+		lblSinhVien.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblSinhVien.setBounds(0, 86, 100, 14);
+		panel_SinhVien.add(lblSinhVien);
 
 		JLabel lblIconsinhvien = new JLabel("");
 		lblIconsinhvien.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIconsinhvien.setBounds(10, 11, 80, 75);
-		ImageIcon imgIcon_Students = new ImageIcon(Home.class.getResource("/resources/Students.png"));
+		ImageIcon imgIcon_Students = new ImageIcon(Login.class.getResource("/resources/images/Students.png"));
 		Image image_Students = imgIcon_Students.getImage();
 		Image newImage_Students = image_Students.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIconsinhvien.setIcon(new ImageIcon(newImage_Students));
-		panel_3.add(lblIconsinhvien);
+		panel_SinhVien.add(lblIconsinhvien);
 
-		JPanel panel_4 = new JPanel();
-		panel_4.setBackground(Color.LIGHT_GRAY);
-		panel_4.setBounds(260, 221, 100, 110);
-		panel.add(panel_4);
-		panel_4.setLayout(null);
+		JPanel panel_Lich = new JPanel();
+		panel_Lich.setBackground(Color.LIGHT_GRAY);
+		panel_Lich.setBounds(260, 221, 100, 110);
+		panel.add(panel_Lich);
+		panel_Lich.setLayout(null);
 
 		JLabel lblIconlichhoc = new JLabel("");
 		lblIconlichhoc.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIconlichhoc.setBounds(10, 11, 80, 75);
-		ImageIcon imgIcon_Schedules = new ImageIcon(Home.class.getResource("/resources/Schedule.png"));
+		ImageIcon imgIcon_Schedules = new ImageIcon(Login.class.getResource("/resources/images/Schedule.png"));
 		Image image_Schedules = imgIcon_Schedules.getImage();
 		Image newImage_Schedules = image_Schedules.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIconlichhoc.setIcon(new ImageIcon(newImage_Schedules));
-		panel_4.add(lblIconlichhoc);
+		panel_Lich.add(lblIconlichhoc);
 
 		JLabel lblLchHc = new JLabel("Lịch Giảng Dạy", SwingConstants.CENTER);
+		lblLchHc.setForeground(Color.BLACK);
 		lblLchHc.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblLchHc.setBounds(0, 86, 100, 14);
-		panel_4.add(lblLchHc);
+		panel_Lich.add(lblLchHc);
 
-		JPanel panel_5 = new JPanel();
-		panel_5.setBackground(Color.LIGHT_GRAY);
-		panel_5.setBounds(400, 221, 100, 110);
-		panel.add(panel_5);
-		panel_5.setLayout(null);
+		JPanel panel_Diem = new JPanel();
+		panel_Diem.setBackground(Color.LIGHT_GRAY);
+		panel_Diem.setBounds(400, 221, 100, 110);
+		panel.add(panel_Diem);
+		panel_Diem.setLayout(null);
 
 		JLabel lblIcondiem = new JLabel("");
 		lblIcondiem.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIcondiem.setBounds(10, 11, 80, 75);
-		ImageIcon imgIcon_Scores = new ImageIcon(Home.class.getResource("/resources/Scores.png"));
+		ImageIcon imgIcon_Scores = new ImageIcon(Login.class.getResource("/resources/images/Scores.png"));
 		Image image_Scores = imgIcon_Scores.getImage();
 		Image newImage_Scores = image_Scores.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIcondiem.setIcon(new ImageIcon(newImage_Scores));
-		panel_5.add(lblIcondiem);
+		panel_Diem.add(lblIcondiem);
 
 		JLabel lblimS = new JLabel("Điểm Số", SwingConstants.CENTER);
+		lblimS.setForeground(Color.BLACK);
 		lblimS.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblimS.setBounds(0, 86, 100, 14);
-		panel_5.add(lblimS);
+		panel_Diem.add(lblimS);
 
 		JPanel panel_6 = new JPanel();
 		panel_6.setBackground(Color.LIGHT_GRAY);
@@ -254,13 +264,14 @@ public class LecturerDashBoard extends JFrame {
 		JLabel lblIconcaidat = new JLabel("");
 		lblIconcaidat.setHorizontalAlignment(SwingConstants.CENTER);
 		lblIconcaidat.setBounds(10, 11, 80, 75);
-		ImageIcon imgIcon_Settings = new ImageIcon(Home.class.getResource("/resources/Settings.png"));
+		ImageIcon imgIcon_Settings = new ImageIcon(Login.class.getResource("/resources/images/Settings.png"));
 		Image image_Settings = imgIcon_Settings.getImage();
 		Image newImage_Settings = image_Settings.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIconcaidat.setIcon(new ImageIcon(newImage_Settings));
 		panel_6.add(lblIconcaidat);
 
 		JLabel lblCit = new JLabel("Cài Đặt", SwingConstants.CENTER);
+		lblCit.setForeground(Color.BLACK);
 		lblCit.setIcon(null);
 		lblCit.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblCit.setBounds(0, 86, 100, 14);
@@ -269,26 +280,40 @@ public class LecturerDashBoard extends JFrame {
 		lblIconsinhvien.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				dispose();
+				LecturerStudents lecturerStudents = new LecturerStudents();
+				genericStuff.call_frame(lecturerStudents);
 			}
 		});
+		// Lấy frame hiện tại truy�?n vào Generic
+		genericStuff.hover(lblIconsinhvien, lblSinhVien, panel_SinhVien);
 
 		lblIconlichhoc.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
 			}
 		});
+		// Lấy frame hiện tại truy�?n vào Generic
+		genericStuff.hover(lblIconlichhoc, lblLchHc, panel_Lich);
 
 		lblIcondiem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
 			}
 		});
+		// Lấy frame hiện tại truy�?n vào Generic
+		genericStuff.hover(lblIcondiem, lblimS, panel_Diem);
 
 		lblIconcaidat.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+
 			}
 		});
+		// Lấy frame hiện tại truy�?n vào Generic
+		genericStuff.hover(lblIconcaidat, lblCit, panel_6);
 	}
 
 	private void init() {
@@ -303,7 +328,7 @@ public class LecturerDashBoard extends JFrame {
 
 	public LecturerDashBoard() {
 
-		// Lấy vị trí hiện tại của con trỏ JFrame
+		// Lấy vị trí hiện tại của con tr�? JFrame
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -318,7 +343,8 @@ public class LecturerDashBoard extends JFrame {
 			public void mouseDragged(MouseEvent e) {
 				int x = e.getXOnScreen();
 				int y = e.getYOnScreen();
-				// Set location cho JFrame dựa trên vị trí con trỏ chuột đang nằm ở JFrame và vị
+				// Set location cho JFrame dựa trên vị trí con tr�? chuột đang nằm ở JFrame và
+				// vị
 				// trí của JFrame trên màn hình
 				setLocation(x - draggedAtX, y - draggedAtY);
 			}
