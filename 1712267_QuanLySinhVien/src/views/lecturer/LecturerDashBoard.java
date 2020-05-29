@@ -7,32 +7,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 import constants.AlertConstants;
-import dao.QuyenDao;
-import entity.Quyen;
-import entity.SinhVien;
-import util.FileParser;
-import util.HibernateUtil;
 import views.AlertDialog;
 import views.GenericStuff;
 import views.Login;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.io.File;
-import java.util.List;
-import java.awt.event.ActionEvent;
 import java.awt.Color;
 
 import javax.swing.JLabel;
@@ -67,58 +50,6 @@ public class LecturerDashBoard extends JFrame {
 	}
 
 	private void event_listener() {
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				dispose();
-//				Home home = new Home();
-//				genericStuff.call_frame(home);
-				JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-separated Values", "csv");
-				fileChooser.setFileFilter(filter);
-				fileChooser.setCurrentDirectory(new File("."));
-				fileChooser.setDialogTitle("Chọn File CSV Để Thêm Mới Sinh Viên");
-
-				int results = fileChooser.showSaveDialog(null);
-
-				if (results == JFileChooser.APPROVE_OPTION) {
-					FileParser fileParser = new FileParser();
-					List<SinhVien> list_sinhVien = fileParser
-							.readFromCSV(fileChooser.getSelectedFile().getAbsolutePath());
-					for (SinhVien sv : list_sinhVien) {
-						System.out.println("MSSV: " + sv.get_mssv());
-						System.out.println("CMND: " + sv.get_cmnd());
-						System.out.println("Tên: " + sv.get_ten());
-						System.out.println("Giới tính: " + sv.get_gioiTinh());
-					}
-
-					try {
-						SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-						Session session = sessionFactory.openSession();
-
-						QuyenDao quyenDao = new QuyenDao();
-						List<Quyen> list_quyen = quyenDao.findAll();
-
-						for (Quyen item : list_quyen) {
-							System.out.println(item.get_tenQuyen());
-//							for (SinhVien student : item.getSinhViens()) {
-//								System.out.println(student.get_mssv());
-//							}
-						}
-
-						session.close();
-
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					LecturerDashBoard frame = new LecturerDashBoard();
-					genericStuff.call_frame(frame);
-				}
-			}
-		});
-		btnNewButton.setBounds(633, 335, 97, 63);
-		contentPane.add(btnNewButton);
 
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 760, 410);
@@ -286,7 +217,8 @@ public class LecturerDashBoard extends JFrame {
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic
-		genericStuff.hover(lblIconsinhvien, lblSinhVien, panel_SinhVien);
+		genericStuff.hover(lblIconsinhvien, lblSinhVien, panel_SinhVien, new Color(230, 230, 250), Color.DARK_GRAY,
+				Color.BLACK, Color.LIGHT_GRAY);
 
 		lblIconlichhoc.addMouseListener(new MouseAdapter() {
 			@Override
@@ -295,7 +227,8 @@ public class LecturerDashBoard extends JFrame {
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic
-		genericStuff.hover(lblIconlichhoc, lblLchHc, panel_Lich);
+		genericStuff.hover(lblIconlichhoc, lblLchHc, panel_Lich, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+				Color.LIGHT_GRAY);
 
 		lblIcondiem.addMouseListener(new MouseAdapter() {
 			@Override
@@ -304,7 +237,8 @@ public class LecturerDashBoard extends JFrame {
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic
-		genericStuff.hover(lblIcondiem, lblimS, panel_Diem);
+		genericStuff.hover(lblIcondiem, lblimS, panel_Diem, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+				Color.LIGHT_GRAY);
 
 		lblIconcaidat.addMouseListener(new MouseAdapter() {
 			@Override
@@ -313,7 +247,8 @@ public class LecturerDashBoard extends JFrame {
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic
-		genericStuff.hover(lblIconcaidat, lblCit, panel_6);
+		genericStuff.hover(lblIconcaidat, lblCit, panel_6, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+				Color.LIGHT_GRAY);
 	}
 
 	private void init() {
@@ -352,4 +287,5 @@ public class LecturerDashBoard extends JFrame {
 
 		init();
 	}
+
 }

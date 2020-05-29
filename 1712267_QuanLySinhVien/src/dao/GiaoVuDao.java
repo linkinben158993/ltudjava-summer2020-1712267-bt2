@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -13,18 +12,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.Lop;
+import entity.GiaoVu;
 import util.HibernateUtil;
 
-@Transactional(rollbackOn = Exception.class)
-public class LopDao {
+public class GiaoVuDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-	public void insert(Lop lop) {
+	public void insert(GiaoVu giaoVu) {
 		Session session = sessionFactory.openSession();
-		Transaction trans = session.beginTransaction();
 		try {
-			session.saveOrUpdate(lop);
+			Transaction trans = session.beginTransaction();
+			session.saveOrUpdate(giaoVu);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -33,18 +31,18 @@ public class LopDao {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Lop> findAll() {
+	public List<GiaoVu> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(Lop.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(GiaoVu.class);
 
-			Root<Lop> root = (Root<Lop>) query.from(Lop.class);
+			Root<GiaoVu> root = (Root<GiaoVu>) query.from(GiaoVu.class);
 
 			query.select(root);
 
-			Query<Lop> list = session.createQuery(query);
+			Query<GiaoVu> list = session.createQuery(query);
 
 			return list.getResultList();
 

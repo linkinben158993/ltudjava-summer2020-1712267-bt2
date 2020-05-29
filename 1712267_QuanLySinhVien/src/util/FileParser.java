@@ -46,24 +46,49 @@ public class FileParser {
 				// Do file input có đầu vào là lớp nên phải set lớp nếu như lớp chưa tồn tại. Do
 				// dùng hàm saveorupdate ở insert nên nếu lớp đã tồn tại thì sẽ giữ nguyên
 				LopDao lopDao = new LopDao();
-				lopDao.insert(lop);
+				List<Lop> lops = lopDao.findAll();
+				Lop foundLop = new Lop().findByML(lops, lop);
 
-				SinhVien newsinhVien = new SinhVien();
-				newsinhVien.set_mssv(parsedStuff.get(i)[1]);
-				newsinhVien.set_ten(parsedStuff.get(i)[2]);
-				newsinhVien.set_gioiTinh(parsedStuff.get(i)[3]);
-				newsinhVien.set_cmnd(parsedStuff.get(i)[4]);
+				if (foundLop == null) {
+					System.out.println("Thêm mới lớp!");
+					lopDao.insert(lop);
 
-				newsinhVien.setMa_quyen(2);
-				newsinhVien.setMa_lop(lop.get_maLop().toString());
+					SinhVien newsinhVien = new SinhVien();
+					newsinhVien.set_mssv(parsedStuff.get(i)[1]);
+					newsinhVien.set_ten(parsedStuff.get(i)[2]);
+					newsinhVien.set_gioiTinh(parsedStuff.get(i)[3]);
+					newsinhVien.set_cmnd(parsedStuff.get(i)[4]);
 
-				newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_cmnd(), BCrypt.gensalt(12)));
+					newsinhVien.setMa_quyen(2);
+					newsinhVien.setMa_lop(lop.get_maLop().toString());
 
-				sinhVien.add(newsinhVien);
+					newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_cmnd(), BCrypt.gensalt(12)));
 
-				// Thêm sinh viên
-				SinhVienDao sinhVienDao = new SinhVienDao();
-				sinhVienDao.insert(newsinhVien);
+					sinhVien.add(newsinhVien);
+
+					// Thêm sinh viên
+					SinhVienDao sinhVienDao = new SinhVienDao();
+					sinhVienDao.insert(newsinhVien);
+				} else {
+					System.out.println("Lớp đã tồn tại thêm mới sinh viên!");
+					
+					SinhVien newsinhVien = new SinhVien();
+					newsinhVien.set_mssv(parsedStuff.get(i)[1]);
+					newsinhVien.set_ten(parsedStuff.get(i)[2]);
+					newsinhVien.set_gioiTinh(parsedStuff.get(i)[3]);
+					newsinhVien.set_cmnd(parsedStuff.get(i)[4]);
+
+					newsinhVien.setMa_quyen(2);
+					newsinhVien.setMa_lop(lop.get_maLop().toString());
+
+					newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_cmnd(), BCrypt.gensalt(12)));
+
+					sinhVien.add(newsinhVien);
+
+					// Thêm sinh viên
+					SinhVienDao sinhVienDao = new SinhVienDao();
+					sinhVienDao.insert(newsinhVien);
+				}
 			}
 		}
 

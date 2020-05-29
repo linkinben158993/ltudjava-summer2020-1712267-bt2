@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -85,6 +88,25 @@ public class Lop implements Serializable {
 
 	public void setSinhViens(List<SinhVien> sinhViens) {
 		this.sinhViens = sinhViens;
+	}
+
+	@Transient
+	Comparator<Lop> lopComparator = new Comparator<Lop>() {
+		@Override
+		public int compare(Lop o1, Lop o2) {
+			return o1.get_maLop().compareTo(o2.get_maLop());
+		}
+	};
+
+	public Lop findByML(List<Lop> listLop, Lop lop) {
+		Collections.sort(listLop, lopComparator);
+		int i = Collections.binarySearch(listLop, lop, lopComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return listLop.get(i);
+		}
 	}
 
 }

@@ -9,7 +9,9 @@ import javax.swing.border.EmptyBorder;
 import org.mindrot.jbcrypt.BCrypt;
 
 import constants.AlertConstants;
+import dao.GiaoVuDao;
 import dao.SinhVienDao;
+import entity.GiaoVu;
 import entity.SinhVien;
 import views.lecturer.LecturerDashBoard;
 
@@ -229,36 +231,59 @@ public class Login extends JFrame {
 		}
 
 		else {
-			// Lấy người dùng dưới DB lên từ đây và so sánh các kiểu
+			// Lấy người dùng (sinh viên) dưới DB lên từ đây và so sánh các kiểu
 			SinhVienDao sinhVienDao = new SinhVienDao();
 			SinhVien sinhVien = new SinhVien();
 			sinhVien.set_mssv(userName);
 			sinhVien.set_password(password);
 			List<SinhVien> sinhViens = sinhVienDao.findAll();
 
-			SinhVien found = new SinhVien();
-			found = found.findByMSSV(sinhViens, sinhVien);
+			SinhVien foundSinhVien = new SinhVien();
+			foundSinhVien = foundSinhVien.findByMSSV(sinhViens, sinhVien);
 
-			if (found == null) {
+			GiaoVuDao giaoVuDao = new GiaoVuDao();
+			GiaoVu giaoVu = new GiaoVu();
+			giaoVu.set_msgv(userName);
+			giaoVu.set_msgv(password);
+			List<GiaoVu> giaoVus = giaoVuDao.findAll();
+
+			GiaoVu foundGiaoVu = new GiaoVu();
+			foundGiaoVu = foundGiaoVu.findByMSGV(giaoVus, giaoVu);
+
+			if (foundSinhVien == null && foundGiaoVu == null) {
 				dispose();
+				System.out.println("Không tìm thấy tài khoản!");
 				alertDialog = new AlertDialog(AlertConstants.NOTFOUND_WARNINGS,
 						AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
 				genericStuff = new GenericStuff();
 				genericStuff.call_frame(alertDialog);
 			} else {
 
-				System.out.println(found.get_ten());
-
-				String hashed = BCrypt.hashpw(found.get_password(), BCrypt.gensalt(12));
-				boolean pass = BCrypt.checkpw(password, hashed);
-				if (pass) {
-					System.out.println("Mật khẩu đúng!");
-					dispose();
-					LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
-					genericStuff = new GenericStuff();
-					genericStuff.call_frame(lecturerDashBoard);
+				if (foundGiaoVu != null) {
+					System.out.println("Tìm thấy tài khoản giáo vụ!");
+					System.out.println(foundGiaoVu.getQuyen_giaovu().get_tenQuyen());
+					String hashed = BCrypt.hashpw(foundGiaoVu.get_password(), BCrypt.gensalt(12));
+					boolean pass = BCrypt.checkpw(password, hashed);
+					if (pass) {
+						System.out.println("Mật khẩu đúng!");
+						dispose();
+						LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
+						genericStuff = new GenericStuff();
+						genericStuff.call_frame(lecturerDashBoard);
+					} else {
+						System.out.println("Mật khẩu sai!");
+					}
 				} else {
-					System.out.println("Mật khẩu sai!");
+					System.out.println("Tìm thấy tài khoản sinh viên!");
+					System.out.println(foundSinhVien.getQuyen_sinhvien().get_tenQuyen());
+					String hashed = BCrypt.hashpw(foundSinhVien.get_password(), BCrypt.gensalt(12));
+					boolean pass = BCrypt.checkpw(password, hashed);
+					if (pass) {
+						System.out.println("Mật khẩu đúng!");
+
+					} else {
+						System.out.println("Mật khẩu sai!");
+					}
 				}
 			}
 		}
