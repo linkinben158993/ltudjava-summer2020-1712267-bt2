@@ -140,44 +140,50 @@ public class LecturerAddStudent extends JFrame {
 		btnNewButton.setBackground(Color.LIGHT_GRAY);
 		btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 11));
 		btnNewButton.addMouseListener(new MouseAdapter() {
+			@SuppressWarnings("static-access")
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (lops.isEmpty()) {
+				// Clear list bên dưới nhưng vẫn giữ lại danh sách lớp để check nếu người dùng
+				// nhập trùng
+				if (((DefaultListModel) getList().getModel()).isEmpty()) {
 
 					String tenSv = textTen.getText();
 					String mssv = textMSSV.getText();
 					String cmnd = textCMND.getText();
 					String lop = textLop.getText();
-					boolean pass = validate_Form(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
-					if (pass) {
 
-						SinhVien newSinhVien = new SinhVien();
-						newSinhVien.set_ten(tenSv);
-						newSinhVien.set_mssv(mssv);
-						newSinhVien.set_cmnd(cmnd);
-						newSinhVien.setMa_lop(lop);
+					// Kiểm tra người dùng có nhập lớp bị trùng với danh sách lớp nào không
+					String lopFinal = lop.toUpperCase();
+					Lop lopExisted = new Lop();
+					lopExisted.set_maLop(lopFinal);
+					lopExisted = lopExisted.findByML(lops, lopExisted);
 
-						if (rdbtnNam.isSelected()) {
-							newSinhVien.set_gioiTinh(rdbtnNam.getText());
-						} else {
-							newSinhVien.set_gioiTinh(rdbtnNu.getText());
+					// Người dùng nhập lớp đã tồn tại confirm thêm mới sinh viên
+					if (lopExisted != null) {
+						JOptionPane confirm = new JOptionPane();
+						int res = confirm.showOptionDialog(null, "Lớp đã tồn tại!",
+								"Thêm mới sinh viên vào lớp " + lopExisted.get_maLop(), JOptionPane.OK_CANCEL_OPTION,
+								JOptionPane.INFORMATION_MESSAGE, null, new String[] { "Thêm", "Hủy" }, "Mặc Định");
+
+						if (res == 0) {
+							add_Student(tenSv, mssv, cmnd, lopFinal, rdbtnNam, rdbtnNu);
+						} else if (res == 1 || res == -1) {
+							// Chưa cần làm gì chỗ này
 						}
 
-						newSinhVien.setMa_quyen(2);
-
-						SinhVienDao sinhVienDao = new SinhVienDao();
-						LopDao lopDao = new LopDao();
-						sinhVienDao.insert(newSinhVien);
-						lopDao.insert(new Lop(lop, "CQ" + lop, "Chính Quy"));
-
-						JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
-						dispose();
-
-					} else {
-						JOptionPane.showMessageDialog(null, "Thêm mới thất bại!");
 					}
 
-				} else {
+					// Lớp chưa tồn tại và người dùng đồng ý thêm lớp mới
+					else {
+
+						LopDao lopDao = new LopDao();
+						lopDao.insert(new Lop(lop, "CQ" + lop, "Chính Quy"));
+						add_Student(tenSv, mssv, cmnd, lopFinal, rdbtnNam, rdbtnNu);
+					}
+
+				}
+				// Người dùng không check thêm lớp mới
+				else {
 
 					if (list.getSelectedValuesList().size() == 0) {
 
@@ -189,31 +195,7 @@ public class LecturerAddStudent extends JFrame {
 						String mssv = textMSSV.getText();
 						String cmnd = textCMND.getText();
 						String lop = list.getSelectedValue().toString();
-						boolean pass = validate_Form(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
-						if (pass) {
-							SinhVien newSinhVien = new SinhVien();
-							newSinhVien.set_ten(tenSv);
-							newSinhVien.set_mssv(mssv);
-							newSinhVien.set_cmnd(cmnd);
-							newSinhVien.setMa_lop(lop);
-
-							if (rdbtnNam.isSelected()) {
-								newSinhVien.set_gioiTinh(rdbtnNam.getText());
-							} else {
-								newSinhVien.set_gioiTinh(rdbtnNu.getText());
-							}
-
-							newSinhVien.setMa_quyen(2);
-
-							SinhVienDao sinhVienDao = new SinhVienDao();
-							sinhVienDao.insert(newSinhVien);
-
-							JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
-							dispose();
-
-						} else {
-							JOptionPane.showMessageDialog(null, "Thêm mới thất bại!");
-						}
+						add_Student(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
 
 					}
 				}
@@ -224,19 +206,26 @@ public class LecturerAddStudent extends JFrame {
 
 		JButton btnLpMi = new JButton("Lớp Mới");
 		btnLpMi.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// Bỏ JList
 				contentPane.remove(getList());
 				((DefaultListModel) getList().getModel()).clear();
 				contentPane.repaint();
-				lops.removeAll(lops);
 
-				textLop = new JTextField();
-				textLop.setColumns(10);
-				textLop.setBackground(Color.LIGHT_GRAY);
-				textLop.setBounds(120, 195, 140, 20);
-				contentPane.add(textLop);
+				if (textLop != null) {
+					// Tránh render lại mất dữ liệu người dùng nhập hay jtext bị đè. Chưa cần làm gì
+					// thêm ở đây
+				} else {
+
+					textLop = new JTextField();
+					textLop.setColumns(10);
+					textLop.setBackground(Color.LIGHT_GRAY);
+					textLop.setBounds(120, 195, 140, 20);
+					contentPane.add(textLop);
+
+				}
 			}
 		});
 		btnLpMi.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -309,6 +298,7 @@ public class LecturerAddStudent extends JFrame {
 		event_listener();
 	}
 
+	// Hàm validate các trường trước khi kiểm thêm mới sinh viên
 	private boolean validate_Form(String tenSv, String mssv, String cmnd, String lop, JRadioButton rdbtnNam,
 			JRadioButton rdbtnNu) {
 		try {
@@ -333,6 +323,37 @@ public class LecturerAddStudent extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	// Hàm thêm mới sinh viên sau khi đã validate xong các trường.
+	private void add_Student(String tenSv, String mssv, String cmnd, String lop, JRadioButton rdbtnNam,
+			JRadioButton rdbtnNu) {
+		boolean pass = validate_Form(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
+		if (pass) {
+
+			SinhVien newSinhVien = new SinhVien();
+			newSinhVien.set_ten(tenSv);
+			newSinhVien.set_mssv(mssv);
+			newSinhVien.set_cmnd(cmnd);
+			newSinhVien.setMa_lop(lop);
+
+			if (rdbtnNam.isSelected()) {
+				newSinhVien.set_gioiTinh(rdbtnNam.getText());
+			} else {
+				newSinhVien.set_gioiTinh(rdbtnNu.getText());
+			}
+
+			newSinhVien.setMa_quyen(2);
+
+			SinhVienDao sinhVienDao = new SinhVienDao();
+			sinhVienDao.insert(newSinhVien);
+
+			JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
+			dispose();
+
+		} else {
+			JOptionPane.showMessageDialog(null, "Thêm mới thất bại!");
 		}
 	}
 }
