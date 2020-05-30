@@ -9,6 +9,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import constants.AlertConstants;
+import entity.GiaoVu;
 import views.AlertDialog;
 import views.GenericStuff;
 import views.Login;
@@ -29,6 +30,15 @@ public class LecturerDashBoard extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private GenericStuff genericStuff = new GenericStuff();
+	private GiaoVu giaoVu;
+
+	public GiaoVu getGiaoVu() {
+		return giaoVu;
+	}
+
+	public void setGiaoVu(GiaoVu giaoVu) {
+		this.giaoVu = giaoVu;
+	}
 
 	// �?ang kéo thả tại t�?a độ x y
 	public int draggedAtX;
@@ -38,7 +48,7 @@ public class LecturerDashBoard extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LecturerDashBoard frame = new LecturerDashBoard();
+					LecturerDashBoard frame = new LecturerDashBoard(new GiaoVu());
 					frame.setLocationRelativeTo(null);
 					frame.setUndecorated(true);
 					frame.setVisible(true);
@@ -52,13 +62,13 @@ public class LecturerDashBoard extends JFrame {
 	private void event_listener() {
 
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 760, 410);
+		panel.setBounds(0, 0, 760, 400);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.GRAY);
-		panel_2.setBounds(0, 0, 760, 200);
+		panel_2.setBounds(0, 0, 760, 180);
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 
@@ -125,7 +135,7 @@ public class LecturerDashBoard extends JFrame {
 
 		JPanel panel_SinhVien = new JPanel();
 		panel_SinhVien.setBackground(Color.LIGHT_GRAY);
-		panel_SinhVien.setBounds(120, 221, 100, 110);
+		panel_SinhVien.setBounds(95, 210, 100, 110);
 		panel.add(panel_SinhVien);
 		panel_SinhVien.setLayout(null);
 
@@ -146,7 +156,7 @@ public class LecturerDashBoard extends JFrame {
 
 		JPanel panel_Lich = new JPanel();
 		panel_Lich.setBackground(Color.LIGHT_GRAY);
-		panel_Lich.setBounds(260, 221, 100, 110);
+		panel_Lich.setBounds(235, 210, 100, 110);
 		panel.add(panel_Lich);
 		panel_Lich.setLayout(null);
 
@@ -167,7 +177,7 @@ public class LecturerDashBoard extends JFrame {
 
 		JPanel panel_Diem = new JPanel();
 		panel_Diem.setBackground(Color.LIGHT_GRAY);
-		panel_Diem.setBounds(400, 221, 100, 110);
+		panel_Diem.setBounds(375, 210, 100, 110);
 		panel.add(panel_Diem);
 		panel_Diem.setLayout(null);
 
@@ -186,11 +196,11 @@ public class LecturerDashBoard extends JFrame {
 		lblimS.setBounds(0, 86, 100, 14);
 		panel_Diem.add(lblimS);
 
-		JPanel panel_6 = new JPanel();
-		panel_6.setBackground(Color.LIGHT_GRAY);
-		panel_6.setBounds(540, 221, 100, 110);
-		panel.add(panel_6);
-		panel_6.setLayout(null);
+		JPanel panel_CaiDat = new JPanel();
+		panel_CaiDat.setBackground(Color.LIGHT_GRAY);
+		panel_CaiDat.setBounds(515, 210, 100, 110);
+		panel.add(panel_CaiDat);
+		panel_CaiDat.setLayout(null);
 
 		JLabel lblIconcaidat = new JLabel("");
 		lblIconcaidat.setHorizontalAlignment(SwingConstants.CENTER);
@@ -199,20 +209,20 @@ public class LecturerDashBoard extends JFrame {
 		Image image_Settings = imgIcon_Settings.getImage();
 		Image newImage_Settings = image_Settings.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIconcaidat.setIcon(new ImageIcon(newImage_Settings));
-		panel_6.add(lblIconcaidat);
+		panel_CaiDat.add(lblIconcaidat);
 
 		JLabel lblCit = new JLabel("Cài Đặt", SwingConstants.CENTER);
 		lblCit.setForeground(Color.BLACK);
 		lblCit.setIcon(null);
 		lblCit.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblCit.setBounds(0, 86, 100, 14);
-		panel_6.add(lblCit);
+		panel_CaiDat.add(lblCit);
 
 		lblIconsinhvien.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				dispose();
-				LecturerStudents lecturerStudents = new LecturerStudents();
+				LecturerStudents lecturerStudents = new LecturerStudents(giaoVu);
 				genericStuff.call_frame(lecturerStudents);
 			}
 		});
@@ -247,13 +257,39 @@ public class LecturerDashBoard extends JFrame {
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic
-		genericStuff.hover(lblIconcaidat, lblCit, panel_6, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+		genericStuff.hover(lblIconcaidat, lblCit, panel_CaiDat, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
 				Color.LIGHT_GRAY);
+
+		JPanel panel_QuayLai = new JPanel();
+		panel_QuayLai.setLayout(null);
+		panel_QuayLai.setBackground(Color.LIGHT_GRAY);
+		panel_QuayLai.setBounds(660, 290, 100, 110);
+		panel.add(panel_QuayLai);
+		JLabel lblBack = new JLabel("Quay Lại", SwingConstants.CENTER);
+		lblBack.setForeground(Color.BLACK);
+		lblBack.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblBack.setBounds(0, 86, 100, 14);
+		panel_QuayLai.add(lblBack);
+		JLabel lblIconBack = new JLabel();
+		ImageIcon imgIcon_Back = new ImageIcon(Login.class.getResource("/resources/images/Back.png"));
+		Image image_Back = imgIcon_Back.getImage();
+		Image newImage_Back = image_Back.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		lblIconBack.setIcon(new ImageIcon(newImage_Back));
+		lblIconBack.setBounds(10, 11, 80, 80);
+		panel_QuayLai.add(lblIconBack);
+		genericStuff.hover(lblIconBack, lblBack, panel_QuayLai, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+				Color.LIGHT_GRAY);
+		
+		JLabel lblCredit = new JLabel("2019 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
+		lblCredit.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCredit.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblCredit.setBounds(206, 386, 330, 14);
+		panel.add(lblCredit);
 	}
 
 	private void init() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 756, 448);
+		setBounds(100, 100, 756, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -261,8 +297,9 @@ public class LecturerDashBoard extends JFrame {
 		event_listener();
 	}
 
-	public LecturerDashBoard() {
+	public LecturerDashBoard(GiaoVu giaovu) {
 
+		setGiaoVu(giaovu);
 		// Lấy vị trí hiện tại của con tr�? JFrame
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -287,5 +324,4 @@ public class LecturerDashBoard extends JFrame {
 
 		init();
 	}
-
 }

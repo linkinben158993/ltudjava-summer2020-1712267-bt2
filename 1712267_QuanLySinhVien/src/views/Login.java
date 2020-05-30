@@ -30,6 +30,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Login extends JFrame {
 
@@ -69,6 +73,11 @@ public class Login extends JFrame {
 		textLoginName.setColumns(10);
 
 		passwordLoginPassword = new JPasswordField();
+		passwordLoginPassword.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				login(textLoginName.getText(), new String(passwordLoginPassword.getPassword()));
+			}
+		});
 		passwordLoginPassword.setBackground(Color.LIGHT_GRAY);
 		passwordLoginPassword.setBounds(445, 320, 182, 40);
 		contentPane.add(passwordLoginPassword);
@@ -267,7 +276,7 @@ public class Login extends JFrame {
 					if (pass) {
 						System.out.println("Mật khẩu đúng!");
 						dispose();
-						LecturerDashBoard lecturerDashBoard = new LecturerDashBoard();
+						LecturerDashBoard lecturerDashBoard = new LecturerDashBoard(foundGiaoVu);
 						genericStuff = new GenericStuff();
 						genericStuff.call_frame(lecturerDashBoard);
 					} else {

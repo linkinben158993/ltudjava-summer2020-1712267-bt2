@@ -10,8 +10,10 @@ import javax.swing.border.EmptyBorder;
 import constants.AlertConstants;
 import dao.LopDao;
 import dao.SinhVienDao;
+import entity.GiaoVu;
 import entity.Lop;
 import entity.SinhVien;
+import views.GenericStuff;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -24,6 +26,8 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.Color;
 import java.awt.Font;
 
@@ -34,11 +38,21 @@ public class LecturerAddStudent extends JFrame {
 	private JTextField textTen;
 	private JTextField textMSSV;
 	private JTextField textCMND;
+	private GenericStuff genericStuff = new GenericStuff();
 
 	@SuppressWarnings("rawtypes")
 	private JList list;
 	private JTextField textLop;
 	private List<Lop> lops;
+	private GiaoVu giaoVu;
+
+	public GiaoVu getGiaoVu() {
+		return giaoVu;
+	}
+
+	public void setGiaoVu(GiaoVu giaoVu) {
+		this.giaoVu = giaoVu;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public JList getList() {
@@ -66,7 +80,7 @@ public class LecturerAddStudent extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LecturerAddStudent frame = new LecturerAddStudent();
+					LecturerAddStudent frame = new LecturerAddStudent(new GiaoVu());
 					frame.setTitle("Thêm sinh viên mới.");
 					frame.setLocationRelativeTo(null);
 					frame.setVisible(true);
@@ -77,7 +91,9 @@ public class LecturerAddStudent extends JFrame {
 		});
 	}
 
-	public LecturerAddStudent() {
+	public LecturerAddStudent(GiaoVu giaoVu) {
+		setGiaoVu(giaoVu);
+		
 		init();
 
 		// Lấy vị trí hiện tại của con tr�? JFrame
@@ -99,6 +115,55 @@ public class LecturerAddStudent extends JFrame {
 				// vị
 				// trí của JFrame trên màn hình
 				setLocation(x - draggedAtX, y - draggedAtY);
+			}
+		});
+
+		addWindowListener(new WindowListener() {
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (JOptionPane.showConfirmDialog(null, "Thoát thêm mới sinh viên?", "Đóng cửa sổ!",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					genericStuff.call_frame(new LecturerStudents(giaoVu));
+				} else {
+					// Chưa cần làm gì ở đây
+				}
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 	}
@@ -350,10 +415,13 @@ public class LecturerAddStudent extends JFrame {
 			sinhVienDao.insert(newSinhVien);
 
 			JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
-			dispose();
+			genericStuff.call_frame(new LecturerStudents(giaoVu));
 
 		} else {
+
 			JOptionPane.showMessageDialog(null, "Thêm mới thất bại!");
+			genericStuff.call_frame(new LecturerStudents(giaoVu));
+
 		}
 	}
 }
