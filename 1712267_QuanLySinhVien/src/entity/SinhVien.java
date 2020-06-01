@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -22,8 +23,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "sinhvien")
-public class SinhVien implements Serializable{
-
+public class SinhVien implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -34,6 +34,18 @@ public class SinhVien implements Serializable{
 
 	@Column(name = "ma_sinhvien")
 	private String _mssv;
+
+	@OneToMany(mappedBy = "sinhVien", fetch = FetchType.LAZY)
+	private List<DSSV_MON> dssv_MON;
+
+	public List<DSSV_MON> getDssv_MON() {
+		return dssv_MON;
+	}
+
+	public void setDssv_MON(List<DSSV_MON> dssv_MON) {
+		this.dssv_MON = dssv_MON;
+	}
+
 	@ColumnDefault(value = "cmnd_sinhvien")
 	@Column(name = "password_sinhvien")
 	private String _password;

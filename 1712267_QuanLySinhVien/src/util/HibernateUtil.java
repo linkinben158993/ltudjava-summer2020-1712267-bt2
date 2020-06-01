@@ -6,8 +6,11 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import entity.DSSV_MON;
+import entity.DSL_MON;
 import entity.GiaoVu;
 import entity.Lop;
+import entity.Mon;
 import entity.Quyen;
 import entity.SinhVien;
 
@@ -25,6 +28,9 @@ public class HibernateUtil {
 			configuration.addAnnotatedClass(SinhVien.class);
 			configuration.addAnnotatedClass(Lop.class);
 			configuration.addAnnotatedClass(GiaoVu.class);
+			configuration.addAnnotatedClass(Mon.class);
+			configuration.addAnnotatedClass(DSSV_MON.class);
+			configuration.addAnnotatedClass(DSL_MON.class);
 			
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
 					.applySettings(configuration.getProperties()).build();

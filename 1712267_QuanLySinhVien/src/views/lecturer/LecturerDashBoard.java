@@ -277,9 +277,17 @@ public class LecturerDashBoard extends JFrame {
 		lblIconBack.setIcon(new ImageIcon(newImage_Back));
 		lblIconBack.setBounds(10, 11, 80, 80);
 		panel_QuayLai.add(lblIconBack);
+		lblIconBack.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+				AlertDialog alert = new AlertDialog(AlertConstants.LOG_OUT_WARNINGS, AlertConstants.LOG_OUT, giaoVu);
+				genericStuff.call_frame(alert);
+			}
+		});
 		genericStuff.hover(lblIconBack, lblBack, panel_QuayLai, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
 				Color.LIGHT_GRAY);
-		
+
 		JLabel lblCredit = new JLabel("2019 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
 		lblCredit.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCredit.setFont(new Font("Tahoma", Font.BOLD, 12));

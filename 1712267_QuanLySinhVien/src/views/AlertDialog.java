@@ -8,6 +8,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import constants.AlertConstants;
+import entity.GiaoVu;
+import entity.SinhVien;
+import views.lecturer.LecturerDashBoard;
+import views.lecturer.LecturerStudents;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
@@ -23,6 +27,10 @@ public class AlertDialog extends JFrame {
 	private JPanel contentPane;
 	private GenericStuff genericStuff = new GenericStuff();
 	private String message;
+	// Truyền lại biến giáo vụ nếu không đăng xuất
+	private GiaoVu giaoVu;
+	// Tí nữa làm cho sinh viên sau
+	private SinhVien sinhVien;
 
 	public String getMessage() {
 		return message;
@@ -30,6 +38,14 @@ public class AlertDialog extends JFrame {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public GiaoVu getGiaoVu() {
+		return giaoVu;
+	}
+
+	public void setGiaoVu(GiaoVu giaoVu) {
+		this.giaoVu = giaoVu;
 	}
 
 	public static void main(String[] args) {
@@ -49,17 +65,33 @@ public class AlertDialog extends JFrame {
 
 	private void event_listener() {
 
-		Button button_exit = new Button("Thoát");
-		button_exit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.exit(0);
-			}
-		});
-		button_exit.setForeground(Color.WHITE);
-		button_exit.setBackground(Color.GRAY);
-		button_exit.setBounds(100, 278, 150, 20);
-		contentPane.add(button_exit);
+		if (message.equals(AlertConstants.LOG_OUT_WARNINGS)) {
+			Button button_exit = new Button("Ở lại!");
+			button_exit.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					dispose();
+					LecturerDashBoard lecturerDashBoard = new LecturerDashBoard(giaoVu);
+					genericStuff.call_frame(lecturerDashBoard);
+				}
+			});
+			button_exit.setForeground(Color.WHITE);
+			button_exit.setBackground(Color.GRAY);
+			button_exit.setBounds(100, 278, 150, 20);
+			contentPane.add(button_exit);
+		} else {
+			Button button_exit = new Button("Thoát");
+			button_exit.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					System.exit(0);
+				}
+			});
+			button_exit.setForeground(Color.WHITE);
+			button_exit.setBackground(Color.GRAY);
+			button_exit.setBounds(100, 278, 150, 20);
+			contentPane.add(button_exit);
+		}
 	}
 
 	private void init(String path) {
@@ -91,12 +123,13 @@ public class AlertDialog extends JFrame {
 		event_listener();
 	}
 
-	// Init với biến cho trường message
+	// Init với biến cho trường message dùng cho login
 	/**
 	 * @wbp.parser.constructor
 	 */
 	public AlertDialog(String message, String path) {
 		this.message = message;
+		
 		init(path);
 
 		if (message.equals(AlertConstants.LEAVING_SO_SOON)) {
@@ -129,6 +162,32 @@ public class AlertDialog extends JFrame {
 		}
 	}
 
+	// Đăng xuất của Lecturer
+	public AlertDialog(String message, String path, GiaoVu giaoVu) {
+		
+		this.message = message;
+		this.giaoVu = giaoVu;
+		setGiaoVu(giaoVu);
+		
+		init(path);
+		
+		if (message.equals(AlertConstants.LOG_OUT_WARNINGS)) {
+			Button button_relogin = new Button("Đăng Xuất");
+			button_relogin.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					dispose();
+					Login home = new Login();
+					genericStuff.call_frame(home);
+				}
+			});
+			button_relogin.setForeground(Color.WHITE);
+			button_relogin.setBackground(Color.GRAY);
+			button_relogin.setBounds(100, 252, 150, 20);
+			contentPane.add(button_relogin);
+		}
+	}
+	
 	public AlertDialog(String path) {
 		init(path);
 	}

@@ -17,4 +17,6 @@ public class AlertConstants {
 	
 	public static final String LEAVING_SO_SOON = "Bạn chắc chắn muốn thoát chứ?";
 	public static final String GOODBYE = "/resources/images/GoodBye.gif";
+	public static final String LOG_OUT_WARNINGS = "Bạn có muốn đăng xuất?";
+	public static final String LOG_OUT = "/resources/images/Logout.png";
 }

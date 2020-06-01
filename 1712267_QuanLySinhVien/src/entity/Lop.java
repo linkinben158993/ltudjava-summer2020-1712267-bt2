@@ -39,6 +39,9 @@ public class Lop implements Serializable {
 	@OneToMany(mappedBy = "lop_sinhvien", fetch = FetchType.LAZY)
 	private List<SinhVien> sinhViens;
 
+	@OneToMany(mappedBy = "lop_mon", fetch = FetchType.LAZY)
+	private List<DSL_MON> sachLop_Mons;
+
 	public Lop() {
 
 	}

@@ -11,9 +11,10 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import constants.AlertConstants;
+import dao.LopDao;
 import dao.SinhVienDao;
 import entity.GiaoVu;
+import entity.Lop;
 import entity.SinhVien;
 import util.FileParser;
 import views.GenericStuff;
@@ -22,6 +23,8 @@ import views.Login;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 
@@ -29,14 +32,16 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import javax.swing.JComboBox;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class LecturerStudents extends JFrame {
 
@@ -48,7 +53,10 @@ public class LecturerStudents extends JFrame {
 	public int draggedAtX;
 	public int draggedAtY;
 	private JTable table;
-	private List<SinhVien> sinhViens;
+	private DefaultTableModel tableModel;
+	@SuppressWarnings("rawtypes")
+	private JComboBox comboBox;
+	private final List<SinhVien> sinhViens = new SinhVienDao().findAll();
 	private JTextField txtSearch;
 	private JTextField txtChoMng;
 	private GiaoVu giaoVu;
@@ -59,14 +67,6 @@ public class LecturerStudents extends JFrame {
 
 	public void setGiaoVu(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
-	}
-
-	public List<SinhVien> getSinhViens() {
-		return sinhViens;
-	}
-
-	public void setSinhViens(List<SinhVien> sinhViens) {
-		this.sinhViens = sinhViens;
 	}
 
 	public static void main(String[] args) {
@@ -84,6 +84,7 @@ public class LecturerStudents extends JFrame {
 		});
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void event_listener() {
 		contentPane.setLayout(null);
 
@@ -249,7 +250,7 @@ public class LecturerStudents extends JFrame {
 					FileParser fileParser = new FileParser();
 					// Uncomment khi muốn test sinh viên và quyền được lấy như thế nào
 					List<SinhVien> list_sinhVien = fileParser
-							.readFromCSV(fileChooser.getSelectedFile().getAbsolutePath());
+							.readFromCSV_SinhVien(fileChooser.getSelectedFile().getAbsolutePath());
 
 					// Nếu muốn in thử list sinh viên và lấy sinh viên thuộc quyền...
 					// printForTestPurpose(list_sinhVien);
@@ -303,8 +304,48 @@ public class LecturerStudents extends JFrame {
 		Image newImage_Back = image_Back.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblBack.setIcon(new ImageIcon(newImage_Back));
 
-		drawTabel();
+		table = new JTable();
+		table.setBackground(Color.LIGHT_GRAY);
+		table.setBounds(324, 60, 420, 360);
+		table.setModel(drawTabel(new SinhVienDao().findAll()));
 
+		table.getColumnModel().getColumn(0).setPreferredWidth(30);
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+		table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		table.getColumnModel().getColumn(1).setPreferredWidth(200);
+
+		contentPane.add(table);
+
+		LopDao lopDao = new LopDao();
+		List<Lop> lops = lopDao.findAll();
+		List<String> strings = new ArrayList<String>();
+		strings.add("Tất Cả Sinh Viên");
+		for (Lop item : lops) {
+			strings.add(item.get_maLop());
+		}
+
+		String[] options = new String[strings.size()];
+		options = strings.toArray(options);
+
+		ComboBoxModel boxModels = new DefaultComboBoxModel(options);
+		boxModels.setSelectedItem(null);
+		comboBox = new JComboBox(boxModels);
+		comboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+
+				if (comboBox.getSelectedItem().toString().equals("Tất Cả Sinh Viên")) {
+					table.setModel(drawTabel(sinhViens));
+				} else {
+					Lop lop = new Lop();
+					lop.set_maLop(comboBox.getSelectedItem().toString());
+					lop = lop.findByML(lops, lop);
+					table.setModel(drawTabel(lop.getSinhViens()));
+				}
+			}
+		});
+		comboBox.setBounds(550, 420, 80, 20);
+		contentPane.add(comboBox);
 	}
 
 	private void init() {
@@ -345,11 +386,11 @@ public class LecturerStudents extends JFrame {
 		});
 	}
 
-	private void drawTabel() {
+	
+	// Trả ra DefaultTableModel để render lại bảng theo ý muốn.
+	private DefaultTableModel drawTabel(List<SinhVien> sinhViens) {
 		String[] columns = { "STT", "Tên", "MSSV", "Giới Tính", "Lớp" };
-		DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
-
-		sinhViens = new SinhVienDao().findAll();
+		tableModel = new DefaultTableModel(columns, 0);
 
 		int i = 0;
 		for (SinhVien student : sinhViens) {
@@ -358,18 +399,6 @@ public class LecturerStudents extends JFrame {
 					student.getMa_lop() };
 			tableModel.addRow(data);
 		}
-
-		table = new JTable();
-		table.setBackground(Color.LIGHT_GRAY);
-		table.setBounds(324, 60, 420, 360);
-		table.setModel(tableModel);
-
-		table.getColumnModel().getColumn(0).setPreferredWidth(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-		table.getColumnModel().getColumn(1).setPreferredWidth(200);
-
-		contentPane.add(table);
+		return tableModel;
 	}
 }

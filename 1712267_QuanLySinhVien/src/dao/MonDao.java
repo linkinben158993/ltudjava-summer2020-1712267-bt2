@@ -13,18 +13,31 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.GiaoVu;
+import entity.DSL_MON;
+import entity.Mon;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
-public class GiaoVuDao {
+public class MonDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-	public void insert(GiaoVu giaoVu) {
+	public void insert(Mon mon) {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			session.saveOrUpdate(giaoVu);
+			session.saveOrUpdate(mon);
+			trans.commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+		session.close();
+	}
+
+	public void insert(DSL_MON dsl_MON) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			session.saveOrUpdate(dsl_MON);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -33,18 +46,18 @@ public class GiaoVuDao {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<GiaoVu> findAll() {
+	public List<Mon> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(GiaoVu.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(Mon.class);
 
-			Root<GiaoVu> root = (Root<GiaoVu>) query.from(GiaoVu.class);
+			Root<Mon> root = (Root<Mon>) query.from(Mon.class);
 
 			query.select(root);
 
-			Query<GiaoVu> list = session.createQuery(query);
+			Query<Mon> list = session.createQuery(query);
 
 			return list.getResultList();
 
