@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,7 +38,7 @@ public class DSSV_MON implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_DANHSACHSINHVIEN_MON"), referencedColumnName = "ma_mon")
 	private Mon mon_dssinhvien;
-	
+
 	public Mon getMon() {
 		return mon_dssinhvien;
 	}
@@ -87,6 +89,21 @@ public class DSSV_MON implements Serializable {
 
 	public void set_maMon(String _maMon) {
 		this._maMon = _maMon;
+	}
+
+	public List<DSSV_MON> findByMLM(String mlm, List<DSSV_MON> dssv_MONs) {
+		List<DSSV_MON> dssv_MONs2 = new ArrayList<DSSV_MON>();
+		for (DSSV_MON item : dssv_MONs) {
+			if (item.get_malopMon().equals(mlm)) {
+				dssv_MONs2.add(item);
+			}
+		}
+		if(dssv_MONs2.isEmpty()) {
+			return null;
+		}
+		else {
+			return dssv_MONs2;
+		}
 	}
 
 }

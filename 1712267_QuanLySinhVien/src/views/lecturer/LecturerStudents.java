@@ -11,8 +11,10 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import dao.DSSVMDao;
 import dao.LopDao;
 import dao.SinhVienDao;
+import entity.DSSV_MON;
 import entity.GiaoVu;
 import entity.Lop;
 import entity.SinhVien;
@@ -42,6 +44,8 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 public class LecturerStudents extends JFrame {
 
@@ -52,14 +56,18 @@ public class LecturerStudents extends JFrame {
 	// �?ang kéo thả tại t�?a độ x y
 	public int draggedAtX;
 	public int draggedAtY;
-	private JTable table;
+	private JTable tableSinhVien;
 	private DefaultTableModel tableModel;
 	@SuppressWarnings("rawtypes")
-	private JComboBox comboBox;
+	private JComboBox comboBox_ClassFilter;
+	@SuppressWarnings("rawtypes")
+	private JComboBox comboBox_SubjectFilter;
 	private final List<SinhVien> sinhViens = new SinhVienDao().findAll();
+	private final List<DSSV_MON> dssv_MONs = new DSSVMDao().findAll();
 	private JTextField txtSearch;
 	private JTextField txtChoMng;
 	private GiaoVu giaoVu;
+	private JTable table_Subject;
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -106,7 +114,7 @@ public class LecturerStudents extends JFrame {
 
 		// Tìm kiếm
 		txtSearch = new JTextField();
-		txtSearch.setText("Tìm kiếm");
+		txtSearch.setText("Tìm kiếm sinh viên");
 		txtSearch.setBackground(Color.LIGHT_GRAY);
 		txtSearch.setBounds(530, 11, 130, 20);
 		SearchBar.add(txtSearch);
@@ -196,16 +204,16 @@ public class LecturerStudents extends JFrame {
 		lblXoa.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (table.getSelectedRowCount() == 0) {
+				if (tableSinhVien.getSelectedRowCount() == 0) {
 
 					JOptionPane.showMessageDialog(null, "Chưa chọn sinh viên nào trên danh sách!");
 
 				} else {
 
-					int cols = table.getColumnCount();
-					int rows = table.getSelectedRow();
+					int cols = tableSinhVien.getColumnCount();
+					int rows = tableSinhVien.getSelectedRow();
 					for (int i = 0; i < cols; i++) {
-						System.out.println(table.getModel().getValueAt(rows, i));
+						System.out.println(tableSinhVien.getModel().getValueAt(rows, i));
 					}
 				}
 			}
@@ -303,54 +311,111 @@ public class LecturerStudents extends JFrame {
 		Image image_Back = imgIcon_Back.getImage();
 		Image newImage_Back = image_Back.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblBack.setIcon(new ImageIcon(newImage_Back));
-
-		table = new JTable();
-		table.setBackground(Color.LIGHT_GRAY);
-		table.setBounds(324, 60, 420, 360);
-		table.setModel(drawTabel(new SinhVienDao().findAll()));
-
-		table.getColumnModel().getColumn(0).setPreferredWidth(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-		table.getColumnModel().getColumn(1).setPreferredWidth(200);
 
-		contentPane.add(table);
+		// Bao bên ngoài table sinh viên để có thể scroll table, k có thì overflow sinh
+		// viên sẽ k thấy được
+		JScrollPane scrollPane_SinhVien = new JScrollPane();
+		scrollPane_SinhVien.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_SinhVien.setBounds(324, 61, 420, 207);
+		contentPane.add(scrollPane_SinhVien);
 
+		tableSinhVien = new JTable();
+		scrollPane_SinhVien.setViewportView(tableSinhVien);
+		tableSinhVien.setBackground(Color.LIGHT_GRAY);
+		tableSinhVien.setModel(drawTabelSinhVien(sinhViens));
+		reSizeTable(tableSinhVien, centerRenderer);
+
+		// Tìm tất cả các lớp render vào combobox
 		LopDao lopDao = new LopDao();
 		List<Lop> lops = lopDao.findAll();
-		List<String> strings = new ArrayList<String>();
-		strings.add("Tất Cả Sinh Viên");
+		List<String> strings_Lop = new ArrayList<String>();
+		strings_Lop.add("Tất Cả Sinh Viên");
 		for (Lop item : lops) {
-			strings.add(item.get_maLop());
+			strings_Lop.add(item.get_maLop());
 		}
 
-		String[] options = new String[strings.size()];
-		options = strings.toArray(options);
+		String[] options_Lop = new String[strings_Lop.size()];
+		options_Lop = strings_Lop.toArray(options_Lop);
 
-		ComboBoxModel boxModels = new DefaultComboBoxModel(options);
-		boxModels.setSelectedItem(null);
-		comboBox = new JComboBox(boxModels);
-		comboBox.addItemListener(new ItemListener() {
+		// Combo box để chọn lọc loại sinh viên thuộc lớp nào
+		ComboBoxModel boxModels_sinhViens = new DefaultComboBoxModel(options_Lop);
+		boxModels_sinhViens.setSelectedItem(null);
+		comboBox_ClassFilter = new JComboBox(boxModels_sinhViens);
+		comboBox_ClassFilter.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 
-				if (comboBox.getSelectedItem().toString().equals("Tất Cả Sinh Viên")) {
-					table.setModel(drawTabel(sinhViens));
+				if (comboBox_ClassFilter.getSelectedItem().toString().equals("Tất Cả Sinh Viên")) {
+					tableSinhVien.setModel(drawTabelSinhVien(sinhViens));
+					reSizeTable(tableSinhVien, centerRenderer);
 				} else {
 					Lop lop = new Lop();
-					lop.set_maLop(comboBox.getSelectedItem().toString());
+					lop.set_maLop(comboBox_ClassFilter.getSelectedItem().toString());
 					lop = lop.findByML(lops, lop);
-					table.setModel(drawTabel(lop.getSinhViens()));
+					tableSinhVien.setModel(drawTabelSinhVien(lop.getSinhViens()));
+					reSizeTable(tableSinhVien, centerRenderer);
 				}
 			}
 		});
-		comboBox.setBounds(550, 420, 80, 20);
-		contentPane.add(comboBox);
+		comboBox_ClassFilter.setBounds(324, 269, 100, 20);
+		contentPane.add(comboBox_ClassFilter);
+
+		JLabel lblSapXep = new JLabel("Lọc theo lớp");
+		lblSapXep.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblSapXep.setBounds(430, 269, 85, 20);
+		contentPane.add(lblSapXep);
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+		JScrollPane scrollPane_Subject = new JScrollPane();
+		scrollPane_Subject.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_Subject.setBounds(324, 300, 416, 110);
+		contentPane.add(scrollPane_Subject);
+
+		table_Subject = new JTable();
+		scrollPane_Subject.setViewportView(table_Subject);
+		table_Subject.setBackground(Color.LIGHT_GRAY);
+		table_Subject.setModel(drawTabelSinhVien_Mon(dssv_MONs));
+		reSizeTable(table_Subject, centerRenderer);
+
+		JLabel lblLcTheoMn = new JLabel("Lọc theo môn");
+		lblLcTheoMn.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblLcTheoMn.setBounds(454, 411, 85, 20);
+		contentPane.add(lblLcTheoMn);
+
+		List<String> strings_Lop_Mon = new ArrayList<String>();
+		strings_Lop_Mon.add("Tất Cả Môn");
+		for (DSSV_MON item : dssv_MONs) {
+			strings_Lop_Mon.add(item.get_malopMon());
+		}
+
+		String[] options_LopMon = new String[strings_Lop_Mon.size()];
+		options_LopMon = strings_Lop_Mon.toArray(options_Lop);
+
+		ComboBoxModel boxModels_dslMon = new DefaultComboBoxModel(options_LopMon);
+		boxModels_dslMon.setSelectedItem(null);
+		comboBox_SubjectFilter = new JComboBox(boxModels_dslMon);
+		comboBox_SubjectFilter.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (comboBox_SubjectFilter.getSelectedItem().toString().equals("Tất Cả Môn")) {
+					table_Subject.setModel(drawTabelSinhVien_Mon(dssv_MONs));
+					reSizeTable(table_Subject, centerRenderer);
+				} else {
+					DSSV_MON dssv_MON = new DSSV_MON();
+					List<DSSV_MON> mons = dssv_MON.findByMLM(comboBox_SubjectFilter.getSelectedItem().toString(),
+							dssv_MONs);
+					table_Subject.setModel(drawTabelSinhVien_Mon(mons));
+					reSizeTable(table_Subject, centerRenderer);
+				}
+			}
+		});
+		comboBox_SubjectFilter.setBounds(324, 412, 120, 20);
+		contentPane.add(comboBox_SubjectFilter);
 	}
 
 	private void init() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 740, 560);
+		setBounds(100, 100, 745, 560);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -386,12 +451,11 @@ public class LecturerStudents extends JFrame {
 		});
 	}
 
-	
 	// Trả ra DefaultTableModel để render lại bảng theo ý muốn.
-	private DefaultTableModel drawTabel(List<SinhVien> sinhViens) {
+	private DefaultTableModel drawTabelSinhVien(List<SinhVien> sinhViens) {
 		String[] columns = { "STT", "Tên", "MSSV", "Giới Tính", "Lớp" };
 		tableModel = new DefaultTableModel(columns, 0);
-
+		// tableModel.addRow(columns);
 		int i = 0;
 		for (SinhVien student : sinhViens) {
 			i++;
@@ -400,5 +464,30 @@ public class LecturerStudents extends JFrame {
 			tableModel.addRow(data);
 		}
 		return tableModel;
+	}
+
+	private DefaultTableModel drawTabelSinhVien_Mon(List<DSSV_MON> dssv_MONs) {
+		String[] columns = { "STT", "Tên", "MSSV", "Giới Tính", "Lớp Môn" };
+		tableModel = new DefaultTableModel(columns, 0);
+		// tableModel.addRow(columns);
+		int i = 0;
+		for (DSSV_MON dssv : dssv_MONs) {
+			i++;
+			// Tìm sinh viên dựa vào class đã map ở dssv
+			String tenSv = dssv.getSinhVien().findByMSSV(sinhViens, dssv.getSinhVien()).get_ten();
+			String gioiTinh = dssv.getSinhVien().findByMSSV(sinhViens, dssv.getSinhVien()).get_gioiTinh();
+
+			String[] data = { String.valueOf(i), tenSv, dssv.get_mssv(), gioiTinh, dssv.get_malopMon() };
+			tableModel.addRow(data);
+		}
+		return tableModel;
+	}
+
+	// Gọi mỗi lần render lại bảng... :(((
+	private void reSizeTable(JTable jTable, DefaultTableCellRenderer centerRenderer) {
+		jTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(1).setPreferredWidth(180);
+		jTable.getColumnModel().getColumn(4).setPreferredWidth(120);
 	}
 }
