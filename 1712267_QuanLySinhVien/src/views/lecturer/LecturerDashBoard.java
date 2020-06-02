@@ -233,6 +233,9 @@ public class LecturerDashBoard extends JFrame {
 		lblIconlichhoc.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				dispose();
+				LecturerSchedule lecturerSchedule = new LecturerSchedule();
+				genericStuff.call_frame(lecturerSchedule);
 
 			}
 		});

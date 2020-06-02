@@ -3,6 +3,7 @@ package util;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import dao.LopDao;
 import dao.MonDao;
 import dao.SinhVienDao;
+import entity.DSL_MON;
 import entity.DSSV_MON;
 import entity.Lop;
 import entity.Mon;
@@ -112,28 +114,35 @@ public class FileParser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// Lớp không được để trong vòng lập do dùng lại nhiều lần
+		Lop lop = new Lop();
 
 		for (int i = 0; i < parsedStuff.size(); ++i) {
-			Lop lop = new Lop();
-			
+
 			if (i == 0) {
 				lop.set_maLop(parsedStuff.get(i)[0]);
 
-
-			}
-			else if(i == 1) {
+			} else if (i == 1) {
 				continue;
-			}
-			else {
-				/*
-				 * Mon mon = new Mon(); mon.set_maMon(parsedStuff.get(i)[0]);
-				 * mon.set_tenMon(parsedStuff.get(i)[1]); mon.set_maMon(parsedStuff.get(i)[2]);
-				 * 
-				 * MonDao monDao = new MonDao(); monDao.insert(mon);
-				 * 
-				 * DSSV_MON dssv_MON = new DSSV_MON(); dssv_MON.set_malopMon(lop.get_maLop());
-				 * dssv_MON.set_mssv(_mssv);
-				 */
+			} else {
+				System.out.println(lop.get_maLop());
+				MonDao monDao = new MonDao();
+
+				// Có môn trước mới có danh sách lớp môn danh sách lớp môn sau khi insert sẽ có
+				// trigger tạo danh sách lớp môn dựa vào mssv
+				// Check trước do môn chỉ cần insert 2 lần mà file parse thì insert nhiều lần
+				// vào môn
+				Mon mon = new Mon();
+				mon.set_maMon(parsedStuff.get(i)[1]);
+				mon.set_tenMon(parsedStuff.get(i)[2]);
+				System.out.println(mon.get_maMon());
+				monDao.insert(mon);
+
+				DSL_MON dsl_MON = new DSL_MON();
+				dsl_MON.set_maMon(mon.get_maMon());
+				dsl_MON.set_maLop(lop.get_maLop());
+				dsl_MON.set_phongHoc(parsedStuff.get(i)[3]);
+				monDao.insert(dsl_MON);
 			}
 		}
 
