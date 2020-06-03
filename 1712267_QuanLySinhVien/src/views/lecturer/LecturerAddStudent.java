@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import constants.AlertConstants;
 import dao.LopDao;
 import dao.SinhVienDao;
@@ -30,6 +32,10 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ItemListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 
 public class LecturerAddStudent extends JFrame {
 
@@ -45,6 +51,9 @@ public class LecturerAddStudent extends JFrame {
 	private JTextField textLop;
 	private List<Lop> lops;
 	private GiaoVu giaoVu;
+
+	private JRadioButton rdbtnNam = new JRadioButton("Nam");
+	private JRadioButton rdbtnNu = new JRadioButton("Nữ");
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -93,7 +102,7 @@ public class LecturerAddStudent extends JFrame {
 
 	public LecturerAddStudent(GiaoVu giaoVu) {
 		setGiaoVu(giaoVu);
-		
+
 		init();
 
 		// Lấy vị trí hiện tại của con tr�? JFrame
@@ -146,17 +155,20 @@ public class LecturerAddStudent extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (JOptionPane.showConfirmDialog(null, "Thoát thêm mới sinh viên?", "Đóng cửa sổ!",
-						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+				int jOptionPane = JOptionPane.showConfirmDialog(null, "Thoát thêm mới sinh viên?", "Đóng cửa sổ!",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (jOptionPane == JOptionPane.YES_OPTION) {
 					genericStuff.call_frame(new LecturerStudents(giaoVu));
 				} else {
-					// Chưa cần làm gì ở đây
+					LecturerAddStudent frame = new LecturerAddStudent(new GiaoVu());
+					frame.setTitle("Thêm sinh viên mới.");
+					frame.setLocationRelativeTo(null);
+					frame.setVisible(true);
 				}
 			}
 
 			@Override
 			public void windowClosed(WindowEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -191,12 +203,31 @@ public class LecturerAddStudent extends JFrame {
 			contentPane.add(textLop);
 		}
 
-		JRadioButton rdbtnNam = new JRadioButton("Nam");
+		rdbtnNam.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (rdbtnNu.isSelected()) {
+					rdbtnNu.setSelected(false);
+				} else {
+					rdbtnNam.setSelected(true);
+				}
+			}
+		});
 		rdbtnNam.setBackground(Color.LIGHT_GRAY);
 		rdbtnNam.setBounds(120, 140, 70, 23);
 		contentPane.add(rdbtnNam);
 
-		JRadioButton rdbtnNu = new JRadioButton("Nữ");
+		rdbtnNu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(rdbtnNam.isSelected()) {
+					rdbtnNam.setSelected(false);
+				}
+				else {
+					rdbtnNu.setSelected(true);
+				}
+			}
+		});
 		rdbtnNu.setBackground(Color.LIGHT_GRAY);
 		rdbtnNu.setBounds(192, 140, 70, 23);
 		contentPane.add(rdbtnNu);
@@ -216,6 +247,7 @@ public class LecturerAddStudent extends JFrame {
 					String mssv = textMSSV.getText();
 					String cmnd = textCMND.getText();
 					String lop = textLop.getText();
+					String hashed = BCrypt.hashpw(cmnd, BCrypt.gensalt(12));
 
 					// Kiểm tra người dùng có nhập lớp bị trùng với danh sách lớp nào không
 					String lopFinal = lop.toUpperCase();
@@ -231,7 +263,7 @@ public class LecturerAddStudent extends JFrame {
 								JOptionPane.INFORMATION_MESSAGE, null, new String[] { "Thêm", "Hủy" }, "Mặc Định");
 
 						if (res == 0) {
-							add_Student(tenSv, mssv, cmnd, lopFinal, rdbtnNam, rdbtnNu);
+							add_Student(tenSv, mssv, cmnd, hashed, lopFinal, rdbtnNam, rdbtnNu);
 						} else if (res == 1 || res == -1) {
 							// Chưa cần làm gì chỗ này
 						}
@@ -243,7 +275,7 @@ public class LecturerAddStudent extends JFrame {
 
 						LopDao lopDao = new LopDao();
 						lopDao.insert(new Lop(lop, "CQ" + lop, "Chính Quy"));
-						add_Student(tenSv, mssv, cmnd, lopFinal, rdbtnNam, rdbtnNu);
+						add_Student(tenSv, mssv, cmnd, hashed, lopFinal, rdbtnNam, rdbtnNu);
 					}
 
 				}
@@ -260,7 +292,8 @@ public class LecturerAddStudent extends JFrame {
 						String mssv = textMSSV.getText();
 						String cmnd = textCMND.getText();
 						String lop = list.getSelectedValue().toString();
-						add_Student(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
+						String hashed = BCrypt.hashpw(cmnd, BCrypt.gensalt(12));
+						add_Student(tenSv, mssv, cmnd, hashed, lop, rdbtnNam, rdbtnNu);
 
 					}
 				}
@@ -392,7 +425,7 @@ public class LecturerAddStudent extends JFrame {
 	}
 
 	// Hàm thêm mới sinh viên sau khi đã validate xong các trường.
-	private void add_Student(String tenSv, String mssv, String cmnd, String lop, JRadioButton rdbtnNam,
+	private void add_Student(String tenSv, String mssv, String cmnd, String hashed, String lop, JRadioButton rdbtnNam,
 			JRadioButton rdbtnNu) {
 		boolean pass = validate_Form(tenSv, mssv, cmnd, lop, rdbtnNam, rdbtnNu);
 		if (pass) {
@@ -402,6 +435,7 @@ public class LecturerAddStudent extends JFrame {
 			newSinhVien.set_mssv(mssv);
 			newSinhVien.set_cmnd(cmnd);
 			newSinhVien.setMa_lop(lop);
+			newSinhVien.set_password(hashed);
 
 			if (rdbtnNam.isSelected()) {
 				newSinhVien.set_gioiTinh(rdbtnNam.getText());
@@ -412,10 +446,16 @@ public class LecturerAddStudent extends JFrame {
 			newSinhVien.setMa_quyen(2);
 
 			SinhVienDao sinhVienDao = new SinhVienDao();
-			sinhVienDao.insert(newSinhVien);
 
-			JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
-			genericStuff.call_frame(new LecturerStudents(giaoVu));
+			SinhVien foundSinhVien = newSinhVien.existed(sinhVienDao.findAll(), newSinhVien);
+			if (foundSinhVien == null) {
+				sinhVienDao.insert(newSinhVien);
+				JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
+				genericStuff.call_frame(new LecturerStudents(giaoVu));
+
+			} else {
+				JOptionPane.showMessageDialog(null, "Sinh viên tồn tại!");
+			}
 
 		} else {
 

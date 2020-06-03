@@ -3,17 +3,16 @@ package util;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import dao.DSLMDao;
 import dao.LopDao;
 import dao.MonDao;
 import dao.SinhVienDao;
 import entity.DSL_MON;
-import entity.DSSV_MON;
 import entity.Lop;
 import entity.Mon;
 import entity.SinhVien;
@@ -135,14 +134,15 @@ public class FileParser {
 				Mon mon = new Mon();
 				mon.set_maMon(parsedStuff.get(i)[1]);
 				mon.set_tenMon(parsedStuff.get(i)[2]);
-				System.out.println(mon.get_maMon());
+				mons.add(mon);
 				monDao.insert(mon);
 
+				DSLMDao dslmDao = new DSLMDao();
 				DSL_MON dsl_MON = new DSL_MON();
 				dsl_MON.set_maMon(mon.get_maMon());
 				dsl_MON.set_maLop(lop.get_maLop());
 				dsl_MON.set_phongHoc(parsedStuff.get(i)[3]);
-				monDao.insert(dsl_MON);
+				dslmDao.insert(dsl_MON);
 			}
 		}
 

@@ -13,19 +13,18 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.DSL_MON;
-import entity.Mon;
+import entity.DCHP;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
-public class MonDao {
+public class DCHPDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-	public void insert(Mon mon) {
+	public void insert(DCHP dchp) {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			session.saveOrUpdate(mon);
+			session.saveOrUpdate(dchp);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -34,18 +33,18 @@ public class MonDao {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Mon> findAll() {
+	public List<DCHP> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(Mon.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(DCHP.class);
 
-			Root<Mon> root = (Root<Mon>) query.from(Mon.class);
+			Root<DCHP> root = (Root<DCHP>) query.from(DCHP.class);
 
 			query.select(root);
 
-			Query<Mon> list = session.createQuery(query);
+			Query<DCHP> list = session.createQuery(query);
 
 			return list.getResultList();
 
@@ -54,4 +53,5 @@ public class MonDao {
 		}
 		return null;
 	}
+
 }

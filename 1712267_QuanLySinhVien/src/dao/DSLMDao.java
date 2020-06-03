@@ -14,18 +14,17 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import entity.DSL_MON;
-import entity.Mon;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
-public class MonDao {
+public class DSLMDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-	public void insert(Mon mon) {
+	public void insert(DSL_MON dsl_MON) {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			session.saveOrUpdate(mon);
+			session.saveOrUpdate(dsl_MON);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -34,18 +33,18 @@ public class MonDao {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<Mon> findAll() {
+	public List<DSL_MON> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(Mon.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(DSL_MON.class);
 
-			Root<Mon> root = (Root<Mon>) query.from(Mon.class);
+			Root<DSL_MON> root = (Root<DSL_MON>) query.from(DSL_MON.class);
 
 			query.select(root);
 
-			Query<Mon> list = session.createQuery(query);
+			Query<DSL_MON> list = session.createQuery(query);
 
 			return list.getResultList();
 

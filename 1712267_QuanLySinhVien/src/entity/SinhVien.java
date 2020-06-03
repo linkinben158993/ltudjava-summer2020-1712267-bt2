@@ -125,6 +125,19 @@ public class SinhVien implements Serializable {
 		this.lop_sinhvien = lop_sinhvien;
 	}
 
+	public SinhVien(String _mssv, String _password, String _ten, String _gioiTinh, String _cmnd,
+			@NotBlank(message = "Vui lòng chọn quyền!") int ma_quyen,
+			@NotBlank(message = "Vui lòng chọn mã lớp!") String ma_lop) {
+		super();
+		this._mssv = _mssv;
+		this._password = _password;
+		this._ten = _ten;
+		this._gioiTinh = _gioiTinh;
+		this._cmnd = _cmnd;
+		this.ma_quyen = ma_quyen;
+		this.ma_lop = ma_lop;
+	}
+
 	public int get_svNo() {
 		return _svNo;
 	}
@@ -188,6 +201,15 @@ public class SinhVien implements Serializable {
 			return null;
 		} else {
 			return listSV.get(i);
+		}
+	}
+
+	public SinhVien existed(List<SinhVien> listSV, SinhVien sv) {
+		SinhVien foundSinhVien = findByMSSV(listSV, sv);
+		if (foundSinhVien != null) {
+			return foundSinhVien;
+		} else {
+			return null;
 		}
 	}
 }

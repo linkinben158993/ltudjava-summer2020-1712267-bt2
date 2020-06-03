@@ -202,6 +202,31 @@ public class Login extends JFrame {
 	}
 
 	public Login() {
+		SinhVienDao sinhVienDao = new SinhVienDao();
+		GiaoVuDao giaoVuDao = new GiaoVuDao();
+
+		// Insert người dùng mặc định
+		SinhVien foundSinhVien = new SinhVien();
+		GiaoVu foundGiaoVu = new GiaoVu();
+		foundSinhVien.set_mssv("1712267");
+		foundGiaoVu.set_msgv("giaovu");
+		foundSinhVien = foundSinhVien.findByMSSV(sinhVienDao.findAll(), foundSinhVien);
+		foundGiaoVu = foundGiaoVu.findByMSGV(giaoVuDao.findAll(), foundGiaoVu);
+
+		if (foundSinhVien == null && foundGiaoVu == null) {
+			sinhVienDao.insert(new SinhVien("1712267", BCrypt.hashpw("1712267", BCrypt.gensalt(12)),
+					"Nguyễn Hoàng Thiên Ân", "Nam", "025852371", 2, "17CTT2"));
+			sinhVienDao.insert(new SinhVien("1712286", BCrypt.hashpw("1712286", BCrypt.gensalt(12)), "Lê Hoài Bảo",
+					"Nam", "09812342", 2, "17CTT2"));
+			sinhVienDao.insert(new SinhVien("1712301", BCrypt.hashpw("1712301", BCrypt.gensalt(12)), "Nguyễn Hoàng Chiến",
+					"Nam", "12349852", 2, "17CTT2"));
+
+			giaoVuDao.insert(new GiaoVu("giaovu", BCrypt.hashpw("giaovu", BCrypt.gensalt(12)), "Trần Văn ABCXYZ", "Nam",
+					"1357902468", 1));
+		} else {
+			System.out.println("TK Mặc Định Đã Tồn Tại.");
+		}
+
 		// Khởi tạo các thành phần cần thiết
 		init();
 
@@ -269,8 +294,7 @@ public class Login extends JFrame {
 				if (foundGiaoVu != null) {
 					System.out.println("Tìm thấy tài khoản giáo vụ!");
 					System.out.println(foundGiaoVu.getQuyen_giaovu().get_tenQuyen());
-					String hashed = BCrypt.hashpw(foundGiaoVu.get_password(), BCrypt.gensalt(12));
-					boolean pass = BCrypt.checkpw(password, hashed);
+					boolean pass = BCrypt.checkpw(password, foundGiaoVu.get_password());
 					if (pass) {
 						System.out.println("Mật khẩu đúng!");
 						dispose();
@@ -283,8 +307,8 @@ public class Login extends JFrame {
 				} else {
 					System.out.println("Tìm thấy tài khoản sinh viên!");
 					System.out.println(foundSinhVien.getQuyen_sinhvien().get_tenQuyen());
-					String hashed = BCrypt.hashpw(foundSinhVien.get_password(), BCrypt.gensalt(12));
-					boolean pass = BCrypt.checkpw(password, hashed);
+					boolean pass = BCrypt.checkpw(password, foundSinhVien.get_password());
+					System.out.println(foundSinhVien.get_password());
 					if (pass) {
 						System.out.println("Mật khẩu đúng!");
 

@@ -11,9 +11,11 @@ import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import dao.DSLMDao;
 import dao.DSSVMDao;
 import dao.LopDao;
 import dao.SinhVienDao;
+import entity.DSL_MON;
 import entity.DSSV_MON;
 import entity.GiaoVu;
 import entity.Lop;
@@ -68,6 +70,8 @@ public class LecturerStudents extends JFrame {
 	private JTextField txtChoMng;
 	private GiaoVu giaoVu;
 	private JTable table_Subject;
+	private JTextField textField;
+	private JTextField textField_1;
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -130,7 +134,7 @@ public class LecturerStudents extends JFrame {
 		SearchBar.add(txtChoMng);
 
 		JPanel MiddleBar = new JPanel();
-		MiddleBar.setBounds(85, 60, 240, 520);
+		MiddleBar.setBounds(85, 60, 240, 500);
 		MiddleBar.setBackground(new Color(178, 34, 34));
 		contentPane.add(MiddleBar);
 		MiddleBar.setLayout(null);
@@ -139,7 +143,7 @@ public class LecturerStudents extends JFrame {
 		JPanel panelThem = new JPanel();
 		panelThem.setLayout(null);
 		panelThem.setBackground(new Color(178, 34, 34));
-		panelThem.setBounds(140, 0, 100, 110);
+		panelThem.setBounds(10, 121, 100, 110);
 		MiddleBar.add(panelThem);
 		JLabel labelThemSinhVien = new JLabel("Thêm Sinh Viên", SwingConstants.CENTER);
 		labelThemSinhVien.setForeground(Color.BLACK);
@@ -193,7 +197,7 @@ public class LecturerStudents extends JFrame {
 		JPanel panelXoa = new JPanel();
 		panelXoa.setLayout(null);
 		panelXoa.setBackground(new Color(178, 34, 34));
-		panelXoa.setBounds(140, 121, 100, 110);
+		panelXoa.setBounds(10, 242, 100, 110);
 		MiddleBar.add(panelXoa);
 		JLabel lblXaSinhVin = new JLabel("Xóa Sinh Viên", SwingConstants.CENTER);
 		lblXaSinhVin.setForeground(Color.BLACK);
@@ -232,7 +236,7 @@ public class LecturerStudents extends JFrame {
 		JPanel panelImport = new JPanel();
 		panelImport.setLayout(null);
 		panelImport.setBackground(new Color(178, 34, 34));
-		panelImport.setBounds(140, 363, 100, 110);
+		panelImport.setBounds(140, 121, 100, 110);
 		MiddleBar.add(panelImport);
 		JLabel lblNhpFileCsv = new JLabel("Nhập File CSV", SwingConstants.CENTER);
 		lblNhpFileCsv.setForeground(Color.BLACK);
@@ -285,12 +289,30 @@ public class LecturerStudents extends JFrame {
 		genericStuff.hover(lblImport, lblNhpFileCsv, panelImport, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK,
 				new Color(178, 34, 34));
 
+		textField = new JTextField();
+		textField.setText("Tên tài khoản:");
+		textField.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		textField.setEditable(false);
+		textField.setColumns(10);
+		textField.setBackground(Color.LIGHT_GRAY);
+		textField.setBounds(10, 11, 220, 38);
+		MiddleBar.add(textField);
+
+		textField_1 = new JTextField();
+		textField_1.setText(giaoVu.get_msgv());
+		textField_1.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		textField_1.setEditable(false);
+		textField_1.setColumns(10);
+		textField_1.setBackground(Color.LIGHT_GRAY);
+		textField_1.setBounds(10, 60, 220, 38);
+		MiddleBar.add(textField_1);
+
 		// Element và sử lý sự kiện của nút quay lại
 		JPanel panelBack = new JPanel();
+		panelBack.setBounds(140, 363, 100, 110);
+		MiddleBar.add(panelBack);
 		panelBack.setLayout(null);
-		panelBack.setBackground(Color.WHITE);
-		panelBack.setBounds(640, 420, 100, 110);
-		contentPane.add(panelBack);
+		panelBack.setBackground(new Color(178, 34, 34));
 		JLabel lblQuayLi = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblQuayLi.setForeground(Color.BLACK);
 		lblQuayLi.setFont(new Font("Times New Roman", Font.BOLD, 14));
@@ -311,6 +333,9 @@ public class LecturerStudents extends JFrame {
 		Image image_Back = imgIcon_Back.getImage();
 		Image newImage_Back = image_Back.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblBack.setIcon(new ImageIcon(newImage_Back));
+		genericStuff.hover(lblBack, lblQuayLi, panelBack, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK,
+				new Color(178, 34, 34));
+
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
@@ -369,7 +394,7 @@ public class LecturerStudents extends JFrame {
 
 		JScrollPane scrollPane_Subject = new JScrollPane();
 		scrollPane_Subject.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane_Subject.setBounds(324, 300, 416, 110);
+		scrollPane_Subject.setBounds(324, 300, 416, 150);
 		contentPane.add(scrollPane_Subject);
 
 		table_Subject = new JTable();
@@ -380,13 +405,14 @@ public class LecturerStudents extends JFrame {
 
 		JLabel lblLcTheoMn = new JLabel("Lọc theo môn");
 		lblLcTheoMn.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		lblLcTheoMn.setBounds(454, 411, 85, 20);
+		lblLcTheoMn.setBounds(454, 450, 85, 20);
 		contentPane.add(lblLcTheoMn);
 
 		List<String> strings_Lop_Mon = new ArrayList<String>();
 		strings_Lop_Mon.add("Tất Cả Môn");
-		for (DSSV_MON item : dssv_MONs) {
-			strings_Lop_Mon.add(item.get_malopMon());
+		List<DSL_MON> dsl_MONs = new DSLMDao().findAll();
+		for (DSL_MON item : dsl_MONs) {
+			strings_Lop_Mon.add(item.getMalop_mon());
 		}
 
 		String[] options_LopMon = new String[strings_Lop_Mon.size()];
@@ -409,7 +435,7 @@ public class LecturerStudents extends JFrame {
 				}
 			}
 		});
-		comboBox_SubjectFilter.setBounds(324, 412, 120, 20);
+		comboBox_SubjectFilter.setBounds(324, 451, 120, 20);
 		contentPane.add(comboBox_SubjectFilter);
 	}
 

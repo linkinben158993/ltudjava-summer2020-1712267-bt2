@@ -234,7 +234,7 @@ public class LecturerDashBoard extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				dispose();
-				LecturerSchedule lecturerSchedule = new LecturerSchedule();
+				LecturerSchedule lecturerSchedule = new LecturerSchedule(giaoVu);
 				genericStuff.call_frame(lecturerSchedule);
 
 			}

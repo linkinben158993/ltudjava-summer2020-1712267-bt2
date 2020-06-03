@@ -1,5 +1,8 @@
 package entity;
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,11 +12,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "danhsachlop_mon")
-public class DSL_MON {
+public class DSL_MON implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@Column(name = "danhsachlop_no")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +61,28 @@ public class DSL_MON {
 
 	public void set_danhsachlopNo(int _danhsachlopNo) {
 		this._danhsachlopNo = _danhsachlopNo;
+	}
+
+	@OneToMany(mappedBy = "dsl_MON", fetch = FetchType.LAZY)
+	private List<DCHP> dchps;
+
+	public List<DCHP> getDchps() {
+		return dchps;
+	}
+
+	public void setDchps(List<DCHP> dchps) {
+		this.dchps = dchps;
+	}
+
+	@Column(name = "malop_mon")
+	private String malop_mon;
+
+	public String getMalop_mon() {
+		return malop_mon;
+	}
+
+	public void setMalop_mon(String malop_mon) {
+		this.malop_mon = malop_mon;
 	}
 
 	@Column(name = "phong_hoc")

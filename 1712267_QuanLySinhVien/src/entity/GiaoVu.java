@@ -83,6 +83,19 @@ public class GiaoVu implements Serializable {
 		this.ma_quyen = ma_quyen;
 		this.quyen_giaovu = quyen_sinhvien;
 	}
+	
+	
+
+	public GiaoVu(String _msgv, String _password, String _ten, String _gioiTinh, String _cmnd,
+			@NotBlank(message = "Vui lòng chọn quyền!") int ma_quyen) {
+		super();
+		this._msgv = _msgv;
+		this._password = _password;
+		this._ten = _ten;
+		this._gioiTinh = _gioiTinh;
+		this._cmnd = _cmnd;
+		this.ma_quyen = ma_quyen;
+	}
 
 	public int get_gvNo() {
 		return _gvNo;
