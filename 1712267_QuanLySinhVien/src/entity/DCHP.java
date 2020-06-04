@@ -1,5 +1,9 @@
 package entity;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "dieuchinh_hocphan")
@@ -94,6 +99,42 @@ public class DCHP {
 
 	public void setDsl_MON(DSL_MON dsl_MON) {
 		this.dsl_MON = dsl_MON;
+	}
+
+	@Transient
+	Comparator<DCHP> dchPMSSVComparator = new Comparator<DCHP>() {
+		public int compare(DCHP o1, DCHP o2) {
+			return o1._masinhVien.compareTo(o2.get_masinhVien());
+		}
+	};
+
+	@Transient
+	Comparator<DCHP> dchPMLMComparator = new Comparator<DCHP>() {
+		public int compare(DCHP o1, DCHP o2) {
+			return o1._malopMon.compareTo(o2.get_malopMon());
+		}
+	};
+
+	public DCHP findByMSSV(List<DCHP> dchps, DCHP dchp) {
+		Collections.sort(dchps, dchPMSSVComparator);
+		int i = Collections.binarySearch(dchps, dchp, dchPMSSVComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return dchps.get(i);
+		}
+	}
+
+	public DCHP findByMLM(List<DCHP> dchps, DCHP dchp) {
+		Collections.sort(dchps, dchPMLMComparator);
+		int i = Collections.binarySearch(dchps, dchp, dchPMLMComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return dchps.get(i);
+		}
 	}
 
 }

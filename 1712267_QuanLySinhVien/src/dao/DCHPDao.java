@@ -20,6 +20,16 @@ import util.HibernateUtil;
 public class DCHPDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+	public DCHP findById(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			return session.find(DCHP.class, id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public void insert(DCHP dchp) {
 		Session session = sessionFactory.openSession();
 		try {
@@ -32,6 +42,18 @@ public class DCHPDao {
 		session.close();
 	}
 
+	public void remove(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			session.remove(findById(id));
+			trans.commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+		session.close();
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<DCHP> findAll() {
 		Session session = sessionFactory.openSession();

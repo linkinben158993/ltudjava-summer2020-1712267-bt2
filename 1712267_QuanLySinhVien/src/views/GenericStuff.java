@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import dao.QuyenDao;
@@ -57,6 +58,16 @@ public class GenericStuff extends JFrame {
 
 			}
 		});
+	}
+
+	@SuppressWarnings("static-access")
+	public int confirmDialog(String message, String title, String yes_opt, String no_opt, String default_opt) {
+		JOptionPane confirm = new JOptionPane();
+		int res = confirm.showOptionDialog(null, message, title,
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+				new String[] { yes_opt, no_opt }, default_opt);
+		dispose();
+		return res;
 	}
 
 	// Hàm dùng để in để debug thử

@@ -13,13 +13,46 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.DSL_MON;
 import entity.DSSV_MON;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
 public class DSSVMDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+	public DSSV_MON findById(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			return session.find(DSSV_MON.class, id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void insert(DSSV_MON dssv_MON) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			session.saveOrUpdate(dssv_MON);
+			trans.commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+		session.close();
+	}
+
+	public void remove(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			session.remove(findById(id));
+			trans.commit();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		}
+		session.close();
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<DSSV_MON> findAll() {

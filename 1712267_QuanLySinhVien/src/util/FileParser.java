@@ -85,7 +85,7 @@ public class FileParser {
 					newsinhVien.setMa_quyen(2);
 					newsinhVien.setMa_lop(lop.get_maLop().toString());
 
-					newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_cmnd(), BCrypt.gensalt(12)));
+					newsinhVien.set_password(BCrypt.hashpw(newsinhVien.get_mssv(), BCrypt.gensalt(12)));
 
 					sinhVien.add(newsinhVien);
 
@@ -120,29 +120,49 @@ public class FileParser {
 
 			if (i == 0) {
 				lop.set_maLop(parsedStuff.get(i)[0]);
-
 			} else if (i == 1) {
 				continue;
 			} else {
 				System.out.println(lop.get_maLop());
 				MonDao monDao = new MonDao();
 
+				LopDao lopDao = new LopDao();
+				List<Lop> lops = lopDao.findAll();
+				Lop foundLop = lop.findByML(lops, lop);
+				if (foundLop == null) {
+					lopDao.insert(lop);
+					Mon mon = new Mon();
+					mon.set_maMon(parsedStuff.get(i)[1]);
+					mon.set_tenMon(parsedStuff.get(i)[2]);
+					mons.add(mon);
+					monDao.insert(mon);
+
+					DSLMDao dslmDao = new DSLMDao();
+					DSL_MON dsl_MON = new DSL_MON();
+					dsl_MON.set_maMon(mon.get_maMon());
+					dsl_MON.set_maLop(lop.get_maLop());
+					dsl_MON.set_phongHoc(parsedStuff.get(i)[3]);
+					dslmDao.insert(dsl_MON);
+				} else {
+					Mon mon = new Mon();
+					mon.set_maMon(parsedStuff.get(i)[1]);
+					mon.set_tenMon(parsedStuff.get(i)[2]);
+					mons.add(mon);
+					monDao.insert(mon);
+
+					DSLMDao dslmDao = new DSLMDao();
+					DSL_MON dsl_MON = new DSL_MON();
+					dsl_MON.set_maMon(mon.get_maMon());
+					dsl_MON.set_maLop(lop.get_maLop());
+					dsl_MON.set_phongHoc(parsedStuff.get(i)[3]);
+					dslmDao.insert(dsl_MON);
+				}
+
 				// Có môn trước mới có danh sách lớp môn danh sách lớp môn sau khi insert sẽ có
 				// trigger tạo danh sách lớp môn dựa vào mssv
 				// Check trước do môn chỉ cần insert 2 lần mà file parse thì insert nhiều lần
 				// vào môn
-				Mon mon = new Mon();
-				mon.set_maMon(parsedStuff.get(i)[1]);
-				mon.set_tenMon(parsedStuff.get(i)[2]);
-				mons.add(mon);
-				monDao.insert(mon);
 
-				DSLMDao dslmDao = new DSLMDao();
-				DSL_MON dsl_MON = new DSL_MON();
-				dsl_MON.set_maMon(mon.get_maMon());
-				dsl_MON.set_maLop(lop.get_maLop());
-				dsl_MON.set_phongHoc(parsedStuff.get(i)[3]);
-				dslmDao.insert(dsl_MON);
 			}
 		}
 

@@ -12,9 +12,11 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.DCHPDao;
 import dao.DSLMDao;
+import dao.DSSVMDao;
 import dao.MonDao;
 import entity.DCHP;
 import entity.DSL_MON;
+import entity.DSSV_MON;
 import entity.GiaoVu;
 import entity.Mon;
 import util.FileParser;
@@ -27,6 +29,7 @@ import javax.swing.JFileChooser;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -187,25 +190,35 @@ public class LecturerSchedule extends JFrame {
 
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.addMouseListener(new MouseAdapter() {
+			@SuppressWarnings("static-access")
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				DCHPDao dchpDao = new DCHPDao();
-				List<DCHP> dchps = dchpDao.findAll();
-				for (DCHP dchp : dchps) {
-					System.out.println(dchp.get_noiDung());
-				}
+
 				int[] selected = tbl_DCHP.getSelectedRows();
+
 				if (selected.length == 0) {
 					JOptionPane.showMessageDialog(null, "Chưa chọn yêu cầu!");
 				} else {
-					for (int i : selected) {
-						System.out.println(tbl_DCHP.getModel().getValueAt(i, 0));
-						System.out.println(tbl_DCHP.getModel().getValueAt(i, 1));
-						System.out.println(tbl_DCHP.getModel().getValueAt(i, 2));
-						System.out.println(tbl_DCHP.getModel().getValueAt(i, 3));
-						System.out.println(tbl_DCHP.getModel().getValueAt(i, 4));
+
+					JOptionPane confirm = new JOptionPane();
+//					int res = confirm.showOptionDialog(null, "Duyệt yêu cầu!", "Xác nhận duyệt các yêu cầu này!",
+//							JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+//							new String[] { "Thêm", "Hủy" }, "Mặc Định");
+
+					dispose();
+					int res = genericStuff.confirmDialog("Duyệt yêu cầu!", "Xác nhận duyệt các yêu cầu này!", "Duyệt",
+							"Hủy", "Mặc Định");
+
+					if (res == 0) {
+						filterRequest(selected);
+						LecturerSchedule lecturerSchedule = new LecturerSchedule(giaoVu);
+						genericStuff.call_frame(lecturerSchedule);
+					} else {
+
 					}
+
 				}
+				tbl_DCHP.clearSelection();
 			}
 		});
 		btnNewButton.setBounds(119, 246, 89, 23);
@@ -233,7 +246,7 @@ public class LecturerSchedule extends JFrame {
 		for (DCHP item : dchps) {
 			i++;
 			if (item.get_mayeuCau() == 1) {
-				String[] data = { String.valueOf(i), item.get_masinhVien(), item.get_malopMon(), "Thêm Mới",
+				String[] data = { String.valueOf(i), item.get_masinhVien(), item.get_malopMon(), "Thêm",
 						item.get_noiDung() };
 				tableModel.addRow(data);
 			} else if (item.get_mayeuCau() == 2) {
@@ -252,5 +265,61 @@ public class LecturerSchedule extends JFrame {
 		jTable.getColumnModel().getColumn(3).setPreferredWidth(120);
 		jTable.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
 		jTable.getColumnModel().getColumn(4).setPreferredWidth(180);
+	}
+
+	private void filterRequest(int[] selected) {
+		DCHPDao dchpDao = new DCHPDao();
+		DSSVMDao dssvmDao = new DSSVMDao();
+		List<DCHP> dchps = dchpDao.findAll();
+
+		for (int i : selected) {
+			if (tbl_DCHP.getModel().getValueAt(i, 3).toString().equals("Thêm")) {
+				DSSV_MON dssv_MON = new DSSV_MON();
+				String maLopMon = tbl_DCHP.getModel().getValueAt(i, 2).toString();
+				String maSinhVien = tbl_DCHP.getModel().getValueAt(i, 1).toString();
+				String maMon = maLopMon.split("-")[1];
+				dssv_MON.set_malopMon(maLopMon);
+				dssv_MON.set_maMon(maMon);
+				dssv_MON.set_mssv(maSinhVien);
+				dssvmDao.insert(dssv_MON);
+
+				// Tìm khóa sinh viên có mã và malopmon để remove
+				List<DCHP> dchps2 = new ArrayList<DCHP>();
+				for (int j = 0; j < dchps.size(); j++) {
+					if (dchps.get(j).get_masinhVien().equals(maSinhVien) && dchps.get(j).get_mayeuCau() != 2) {
+						dchps2.add(dchps.get(j));
+					}
+				}
+				for (int j = 0; j < dchps2.size(); j++) {
+					if (dchps2.get(j).get_malopMon().equals(maLopMon) && dchps.get(j).get_mayeuCau() != 2) {
+						dchpDao.remove(dchps2.get(j).getYeucau_no());
+					}
+				}
+			} else if (tbl_DCHP.getModel().getValueAt(i, 3).toString().equals("Xóa")) {
+				String maLopMon = tbl_DCHP.getModel().getValueAt(i, 2).toString();
+				String maSinhVien = tbl_DCHP.getModel().getValueAt(i, 1).toString();
+
+				List<DSSV_MON> dssv_MONs = dssvmDao.findAll();
+
+				for (DSSV_MON item : dssv_MONs) {
+					if (item.get_malopMon().equals(maLopMon) && item.get_mssv().equals(maSinhVien)) {
+						dssvmDao.remove(item.get_dssvNo());
+					}
+				}
+
+				// Tìm khóa sinh viên có mã và malopmon để remove
+				List<DCHP> dchps2 = new ArrayList<DCHP>();
+				for (int j = 0; j < dchps.size(); j++) {
+					if (dchps.get(j).get_masinhVien().equals(maSinhVien) && dchps.get(j).get_mayeuCau() != 1) {
+						dchps2.add(dchps.get(j));
+					}
+				}
+				for (int j = 0; j < dchps2.size(); j++) {
+					if (dchps2.get(j).get_malopMon().equals(maLopMon) && dchps.get(j).get_mayeuCau() != 1) {
+						dchpDao.remove(dchps2.get(j).getYeucau_no());
+					}
+				}
+			}
+		}
 	}
 }

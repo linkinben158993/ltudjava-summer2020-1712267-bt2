@@ -2,6 +2,8 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "danhsachsinhvien_mon")
@@ -91,6 +94,24 @@ public class DSSV_MON implements Serializable {
 		this._maMon = _maMon;
 	}
 
+	@Transient
+	Comparator<DSSV_MON> dssvMonComparator = new Comparator<DSSV_MON>() {
+		public int compare(DSSV_MON o1, DSSV_MON o2) {
+			return o1.get_mssv().compareTo(o2.get_mssv());
+		}
+	};
+
+	public DSSV_MON findByMSSV(List<DSSV_MON> dssv_MONs, DSSV_MON dssv_MON) {
+		Collections.sort(dssv_MONs, dssvMonComparator);
+		int i = Collections.binarySearch(dssv_MONs, dssv_MON, dssvMonComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return dssv_MONs.get(i);
+		}
+	}
+
 	public List<DSSV_MON> findByMLM(String mlm, List<DSSV_MON> dssv_MONs) {
 		List<DSSV_MON> dssv_MONs2 = new ArrayList<DSSV_MON>();
 		for (DSSV_MON item : dssv_MONs) {
@@ -98,10 +119,9 @@ public class DSSV_MON implements Serializable {
 				dssv_MONs2.add(item);
 			}
 		}
-		if(dssv_MONs2.isEmpty()) {
+		if (dssv_MONs2.isEmpty()) {
 			return null;
-		}
-		else {
+		} else {
 			return dssv_MONs2;
 		}
 	}

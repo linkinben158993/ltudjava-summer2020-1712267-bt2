@@ -247,7 +247,7 @@ public class LecturerAddStudent extends JFrame {
 					String mssv = textMSSV.getText();
 					String cmnd = textCMND.getText();
 					String lop = textLop.getText();
-					String hashed = BCrypt.hashpw(cmnd, BCrypt.gensalt(12));
+					String hashed = BCrypt.hashpw(mssv, BCrypt.gensalt(12));
 
 					// Kiểm tra người dùng có nhập lớp bị trùng với danh sách lớp nào không
 					String lopFinal = lop.toUpperCase();
@@ -451,6 +451,7 @@ public class LecturerAddStudent extends JFrame {
 			if (foundSinhVien == null) {
 				sinhVienDao.insert(newSinhVien);
 				JOptionPane.showMessageDialog(null, "Thêm mới thành công!");
+				dispose();
 				genericStuff.call_frame(new LecturerStudents(giaoVu));
 
 			} else {
@@ -458,8 +459,8 @@ public class LecturerAddStudent extends JFrame {
 			}
 
 		} else {
-
 			JOptionPane.showMessageDialog(null, "Thêm mới thất bại!");
+			dispose();
 			genericStuff.call_frame(new LecturerStudents(giaoVu));
 
 		}
