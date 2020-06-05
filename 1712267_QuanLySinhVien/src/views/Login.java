@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import constants.AlertConstants;
 import dao.GiaoVuDao;
 import dao.SinhVienDao;
+import entity.DSSV_MON;
 import entity.GiaoVu;
 import entity.SinhVien;
 import views.lecturer.LecturerDashBoard;
@@ -218,13 +219,21 @@ public class Login extends JFrame {
 					"Nguyễn Hoàng Thiên Ân", "Nam", "025852371", 2, "17CTT2"));
 			sinhVienDao.insert(new SinhVien("1712286", BCrypt.hashpw("1712286", BCrypt.gensalt(12)), "Lê Hoài Bảo",
 					"Nam", "09812342", 2, "17CTT2"));
-			sinhVienDao.insert(new SinhVien("1712301", BCrypt.hashpw("1712301", BCrypt.gensalt(12)), "Nguyễn Hoàng Chiến",
-					"Nam", "12349852", 2, "17CTT2"));
+			sinhVienDao.insert(new SinhVien("1712301", BCrypt.hashpw("1712301", BCrypt.gensalt(12)),
+					"Nguyễn Hoàng Chiến", "Nam", "12349852", 2, "17CTT2"));
+			sinhVienDao.insert(new SinhVien("1712480", BCrypt.hashpw("1712480", BCrypt.gensalt(12)), "Nguyễn Đăng Hưng",
+					"Nam", "0901582934", 2, "17CTT4"));
 
 			giaoVuDao.insert(new GiaoVu("giaovu", BCrypt.hashpw("giaovu", BCrypt.gensalt(12)), "Trần Văn ABCXYZ", "Nam",
 					"1357902468", 1));
 		} else {
 			System.out.println("TK Mặc Định Đã Tồn Tại.");
+			List<SinhVien> sinhViens = sinhVienDao.findAll();
+			for (SinhVien student : sinhViens) {
+				for (DSSV_MON dssv_MON : student.getDssv_MON()) {
+					System.out.println(dssv_MON.get_dssvNo() + " " + dssv_MON.get_malopMon());
+				}
+			}
 		}
 
 		// Khởi tạo các thành phần cần thiết

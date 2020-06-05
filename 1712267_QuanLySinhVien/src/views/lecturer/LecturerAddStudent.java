@@ -32,10 +32,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 
 public class LecturerAddStudent extends JFrame {
 
@@ -178,6 +176,27 @@ public class LecturerAddStudent extends JFrame {
 
 			}
 		});
+
+		// Lấy vị trí hiện tại của con trỏ JFrame
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				draggedAtX = e.getX();
+				draggedAtY = e.getY();
+			}
+		});
+		// Kéo thả Jpanel khi đã có vị trí hiện tại của con JFrame e.getXOnScreen()
+		// e.getYOnScreen() trên màn hình
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				int x = e.getXOnScreen();
+				int y = e.getYOnScreen();
+				// Set location cho JFrame dựa trên vị trí con trỏ chuột đang nằm ở JFrame và vị
+				// trí của JFrame trên màn hình
+				setLocation(x - draggedAtX, y - draggedAtY);
+			}
+		});
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -220,10 +239,9 @@ public class LecturerAddStudent extends JFrame {
 		rdbtnNu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(rdbtnNam.isSelected()) {
+				if (rdbtnNam.isSelected()) {
 					rdbtnNam.setSelected(false);
-				}
-				else {
+				} else {
 					rdbtnNu.setSelected(true);
 				}
 			}

@@ -246,7 +246,9 @@ public class LecturerDashBoard extends JFrame {
 		lblIcondiem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				dispose();
+				LecturerGrades lecturerGrades = new LecturerGrades(giaoVu);
+				genericStuff.call_frame(lecturerGrades);
 			}
 		});
 		// Lấy frame hiện tại truy�?n vào Generic

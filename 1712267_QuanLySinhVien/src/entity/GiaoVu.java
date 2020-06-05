@@ -8,7 +8,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,7 +55,7 @@ public class GiaoVu implements Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_quyen", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_SINHVIEN_QUYEN"))
+	@JoinColumn(name = "ma_quyen", insertable = false, updatable = false, nullable = true)
 	private Quyen quyen_giaovu;
 
 	public void setQuyen_giaovu(Quyen quyen_giaovu) {
@@ -83,8 +82,6 @@ public class GiaoVu implements Serializable {
 		this.ma_quyen = ma_quyen;
 		this.quyen_giaovu = quyen_sinhvien;
 	}
-	
-	
 
 	public GiaoVu(String _msgv, String _password, String _ten, String _gioiTinh, String _cmnd,
 			@NotBlank(message = "Vui lòng chọn quyền!") int ma_quyen) {
@@ -152,7 +149,7 @@ public class GiaoVu implements Serializable {
 			return o1.get_msgv().compareTo(o2.get_msgv());
 		}
 	};
-	
+
 	public GiaoVu findByMSGV(List<GiaoVu> listGV, GiaoVu gv) {
 		Collections.sort(listGV, giaoVuComparator);
 		int i = Collections.binarySearch(listGV, gv, giaoVuComparator);

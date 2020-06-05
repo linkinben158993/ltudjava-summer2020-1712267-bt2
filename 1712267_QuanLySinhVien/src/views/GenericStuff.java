@@ -3,12 +3,16 @@ package views;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import dao.QuyenDao;
 import entity.Quyen;
@@ -16,6 +20,9 @@ import entity.SinhVien;
 
 public class GenericStuff extends JFrame {
 	private static final long serialVersionUID = 1L;
+
+	public int draggedAtX;
+	public int draggedAtY;
 
 	public GenericStuff() {
 
@@ -63,11 +70,19 @@ public class GenericStuff extends JFrame {
 	@SuppressWarnings("static-access")
 	public int confirmDialog(String message, String title, String yes_opt, String no_opt, String default_opt) {
 		JOptionPane confirm = new JOptionPane();
-		int res = confirm.showOptionDialog(null, message, title,
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-				new String[] { yes_opt, no_opt }, default_opt);
+		int res = confirm.showOptionDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.INFORMATION_MESSAGE, null, new String[] { yes_opt, no_opt }, default_opt);
 		dispose();
 		return res;
+	}
+
+	public JFileChooser chooseFile(String message) {
+		JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Comma-separated Values", "csv");
+		fileChooser.setFileFilter(filter);
+		fileChooser.setCurrentDirectory(new File("."));
+		fileChooser.setDialogTitle("Chọn File CSV Để Thêm Mới Sinh Viên");
+		return fileChooser;
 	}
 
 	// Hàm dùng để in để debug thử

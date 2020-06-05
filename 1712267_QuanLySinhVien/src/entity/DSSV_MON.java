@@ -9,7 +9,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,7 +38,7 @@ public class DSSV_MON implements Serializable {
 	private String _maMon;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_DANHSACHSINHVIEN_MON"), referencedColumnName = "ma_mon")
+	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_mon")
 	private Mon mon_dssinhvien;
 
 	public Mon getMon() {
@@ -51,7 +50,7 @@ public class DSSV_MON implements Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_sinhvien", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_DANHSACHSINHVIEN_SINHVIEN"), referencedColumnName = "ma_sinhvien")
+	@JoinColumn(name = "ma_sinhvien", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_sinhvien")
 	private SinhVien sinhVien;
 
 	public SinhVien getSinhVien() {

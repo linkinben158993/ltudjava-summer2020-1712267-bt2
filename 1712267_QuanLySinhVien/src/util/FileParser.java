@@ -9,10 +9,12 @@ import java.util.List;
 import org.mindrot.jbcrypt.BCrypt;
 
 import dao.DSLMDao;
+import dao.DiemDao;
 import dao.LopDao;
 import dao.MonDao;
 import dao.SinhVienDao;
 import entity.DSL_MON;
+import entity.Diem;
 import entity.Lop;
 import entity.Mon;
 import entity.SinhVien;
@@ -169,9 +171,45 @@ public class FileParser {
 		return mons;
 	}
 
-	public List<Lop> readFromCSV_Lop() {
-		List<Lop> lop = new ArrayList<Lop>();
+	public List<Diem> readFromCSV_Lop(String fileName) {
+		List<String[]> parsedStuff = new ArrayList<String[]>();
+		List<Diem> diems = new ArrayList<Diem>();
 
-		return lop;
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"))) {
+			String line = br.readLine();
+			while (line != null) {
+				String[] stuff = line.split(",");
+				parsedStuff.add(stuff);
+				line = br.readLine();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		DSL_MON dsl_MON = new DSL_MON();
+		DiemDao diemDao = new DiemDao();
+
+		for (int i = 0; i < parsedStuff.size(); ++i) {
+			if (i == 0) {
+				dsl_MON.setMalop_mon(parsedStuff.get(i)[0]);
+			} else if (i == 1) {
+				continue;
+			} else {
+				Diem diem = new Diem();
+				diem.setMaLop_mon(dsl_MON.getMalop_mon());
+				diem.set_mssv(parsedStuff.get(i)[1]);
+				diem.set_tenSinhVien(parsedStuff.get(i)[2]);
+				diem.set_gk(Float.parseFloat(parsedStuff.get(i)[3]));
+				diem.set_ck(Float.parseFloat(parsedStuff.get(i)[4]));
+				diem.set_khac(Float.parseFloat(parsedStuff.get(i)[5]));
+				diem.set_tongDiem(Float.parseFloat(parsedStuff.get(i)[6]));
+
+				
+				diems.add(diem);
+				diemDao.insert(diem);
+			}
+		}
+
+		return diems;
 	}
 }

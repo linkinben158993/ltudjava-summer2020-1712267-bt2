@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ public class DSL_MON implements Serializable {
 	private String _maMon;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_DANHSACHLOP_MON"), referencedColumnName = "ma_mon")
+	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_mon")
 	private Mon mon_lop;
 
 	public Mon getMon_lop() {
@@ -44,7 +43,7 @@ public class DSL_MON implements Serializable {
 	private String _maLop;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_lop", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_DANHSACHLOP_MON_LOP"), referencedColumnName = "ma_lop")
+	@JoinColumn(name = "ma_lop", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_lop")
 	private Lop lop_mon;
 
 	public Lop getLop_mon() {

@@ -28,6 +28,7 @@ import javax.swing.JFileChooser;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,6 @@ import java.awt.Font;
 import java.awt.Image;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JButton;
 
 public class LecturerSchedule extends JFrame {
 
@@ -60,6 +60,10 @@ public class LecturerSchedule extends JFrame {
 	public void setGiaoVu(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
 	}
+	
+	public int draggedAtX;
+	public int draggedAtY;
+	
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -77,17 +81,35 @@ public class LecturerSchedule extends JFrame {
 	public LecturerSchedule(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 400);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		init();
 
+		// Lấy vị trí hiện tại của con trỏ JFrame
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				draggedAtX = e.getX();
+				draggedAtY = e.getY();
+			}
+		});
+		// Kéo thả Jpanel khi đã có vị trí hiện tại của con JFrame e.getXOnScreen()
+		// e.getYOnScreen() trên màn hình
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				int x = e.getXOnScreen();
+				int y = e.getYOnScreen();
+				// Set location cho JFrame dựa trên vị trí con trỏ chuột đang nằm ở JFrame và vị
+				// trí của JFrame trên màn hình
+				setLocation(x - draggedAtX, y - draggedAtY);
+			}
+		});
+	}
+
+	private void event_listener() {
 		JPanel panelImport = new JPanel();
 		panelImport.setLayout(null);
 		panelImport.setBackground(Color.WHITE);
-		panelImport.setBounds(10, 5, 100, 110);
+		panelImport.setBounds(116, 282, 100, 110);
 		contentPane.add(panelImport);
 		JLabel lblNhpFile = new JLabel("Nhập File CSV", SwingConstants.CENTER);
 		lblNhpFile.setForeground(Color.BLACK);
@@ -136,18 +158,63 @@ public class LecturerSchedule extends JFrame {
 				Color.BLACK, Color.WHITE);
 		panelImport.add(lblIconImport);
 
+		JPanel panelApprove = new JPanel();
+		panelApprove.setLayout(null);
+		panelApprove.setBackground(Color.WHITE);
+		panelApprove.setBounds(430, 282, 100, 110);
+		contentPane.add(panelApprove);
+		JLabel lblDuytYuCu = new JLabel("Duyệt Yêu cầu", SwingConstants.CENTER);
+		lblDuytYuCu.setForeground(Color.BLACK);
+		lblDuytYuCu.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblDuytYuCu.setBounds(0, 86, 100, 14);
+		panelApprove.add(lblDuytYuCu);
+		JLabel lblIconApproved = new JLabel();
+		lblIconApproved.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int[] selected = tbl_DCHP.getSelectedRows();
+
+				if (selected.length == 0) {
+					JOptionPane.showMessageDialog(null, "Chưa chọn yêu cầu!");
+				} else {
+
+					dispose();
+					int res = genericStuff.confirmDialog("Duyệt yêu cầu!", "Xác nhận duyệt các yêu cầu này!", "Duyệt",
+							"Hủy", "Mặc Định");
+
+					if (res == 0) {
+						filterRequest(selected);
+						LecturerSchedule lecturerSchedule = new LecturerSchedule(giaoVu);
+						genericStuff.call_frame(lecturerSchedule);
+					} else {
+						LecturerSchedule lecturerSchedule = new LecturerSchedule(giaoVu);
+						genericStuff.call_frame(lecturerSchedule);
+					}
+
+				}
+				tbl_DCHP.clearSelection();
+			}
+		});
+		ImageIcon imgIcon_Approved = new ImageIcon(
+				LecturerSchedule.class.getResource("/resources/images/Approved.png"));
+		Image image_Approved = imgIcon_Approved.getImage();
+		Image newImage_Approved = image_Approved.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		lblIconApproved.setIcon(new ImageIcon(newImage_Approved));
+		lblIconApproved.setBounds(10, 5, 80, 80);
+		genericStuff.hover(lblIconApproved, lblDuytYuCu, panelApprove, new Color(230, 230, 250), Color.LIGHT_GRAY,
+				Color.BLACK, Color.WHITE);
+		panelApprove.add(lblIconApproved);
+
 		JPanel panel_QuayLai = new JPanel();
 		panel_QuayLai.setLayout(null);
 		panel_QuayLai.setBackground(Color.WHITE);
-		panel_QuayLai.setBounds(10, 126, 100, 110);
+		panel_QuayLai.setBounds(10, 5, 100, 110);
 		contentPane.add(panel_QuayLai);
-
 		JLabel lblQuayLi = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblQuayLi.setForeground(Color.BLACK);
 		lblQuayLi.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		lblQuayLi.setBounds(0, 92, 100, 14);
 		panel_QuayLai.add(lblQuayLi);
-
 		JLabel lblIconBack = new JLabel();
 		lblIconBack.addMouseListener(new MouseAdapter() {
 			@Override
@@ -167,7 +234,7 @@ public class LecturerSchedule extends JFrame {
 		panel_QuayLai.add(lblIconBack);
 
 		JScrollPane scrollPane_TKB = new JScrollPane();
-		scrollPane_TKB.setBounds(120, 5, 300, 230);
+		scrollPane_TKB.setBounds(120, 41, 300, 230);
 		contentPane.add(scrollPane_TKB);
 
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
@@ -180,50 +247,44 @@ public class LecturerSchedule extends JFrame {
 		scrollPane_TKB.setViewportView(tbl_TKB);
 
 		JScrollPane scrollPane_DCHP = new JScrollPane();
-		scrollPane_DCHP.setBounds(430, 6, 300, 230);
+		scrollPane_DCHP.setBounds(430, 41, 344, 230);
 		contentPane.add(scrollPane_DCHP);
 
 		tbl_DCHP = new JTable();
 		tbl_DCHP.setModel(draw_DCHP(new DCHPDao().findAll()));
 		reSizeTable(tbl_DCHP, centerRenderer);
 		scrollPane_DCHP.setViewportView(tbl_DCHP);
+	}
 
-		JButton btnNewButton = new JButton("New button");
-		btnNewButton.addMouseListener(new MouseAdapter() {
-			@SuppressWarnings("static-access")
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
+	private void init() {
+		setGiaoVu(giaoVu);
 
-				int[] selected = tbl_DCHP.getSelectedRows();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 800, 440);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
 
-				if (selected.length == 0) {
-					JOptionPane.showMessageDialog(null, "Chưa chọn yêu cầu!");
-				} else {
+		JLabel lblTKB = new JLabel("Thời Khóa Biểu");
+		lblTKB.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblTKB.setBounds(120, 5, 130, 14);
+		contentPane.add(lblTKB);
 
-					JOptionPane confirm = new JOptionPane();
-//					int res = confirm.showOptionDialog(null, "Duyệt yêu cầu!", "Xác nhận duyệt các yêu cầu này!",
-//							JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
-//							new String[] { "Thêm", "Hủy" }, "Mặc Định");
+		JLabel lblRequest = new JLabel("Danh sách đăng ký / hủy  lớp");
+		lblRequest.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblRequest.setBounds(430, 5, 200, 14);
+		contentPane.add(lblRequest);
 
-					dispose();
-					int res = genericStuff.confirmDialog("Duyệt yêu cầu!", "Xác nhận duyệt các yêu cầu này!", "Duyệt",
-							"Hủy", "Mặc Định");
+		JLabel lblHuongDan = new JLabel("Chọn 1 hoặc nhiều yêu cầu và bấm duyệt để duyệt yêu cầu");
+		lblHuongDan.setBounds(430, 27, 344, 14);
+		contentPane.add(lblHuongDan);
 
-					if (res == 0) {
-						filterRequest(selected);
-						LecturerSchedule lecturerSchedule = new LecturerSchedule(giaoVu);
-						genericStuff.call_frame(lecturerSchedule);
-					} else {
+		JLabel lblBmNhpFile = new JLabel("Bấm nhập File CSV để import thời khóa biểu");
+		lblBmNhpFile.setBounds(120, 27, 300, 14);
+		contentPane.add(lblBmNhpFile);
 
-					}
-
-				}
-				tbl_DCHP.clearSelection();
-			}
-		});
-		btnNewButton.setBounds(119, 246, 89, 23);
-		contentPane.add(btnNewButton);
-
+		event_listener();
 	}
 
 	private DefaultTableModel draw_TKB(List<DSL_MON> dsl_MONs) {

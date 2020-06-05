@@ -8,7 +8,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -70,7 +69,7 @@ public class SinhVien implements Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_quyen", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_SINHVIEN_QUYEN"))
+	@JoinColumn(name = "ma_quyen", insertable = false, updatable = false, nullable = true)
 	private Quyen quyen_sinhvien;
 
 	public Quyen getQuyen_sinhvien() {
@@ -94,7 +93,7 @@ public class SinhVien implements Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "malop_sinhvien", insertable = false, updatable = false, nullable = true, foreignKey = @ForeignKey(name = "FK_SINHVIEN_MALOP"), referencedColumnName = "ma_lop")
+	@JoinColumn(name = "malop_sinhvien", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_lop")
 	private Lop lop_sinhvien;
 
 	public Lop getLop_sinhvien() {
@@ -103,6 +102,17 @@ public class SinhVien implements Serializable {
 
 	public void setLop_sinhvien(Lop lop_sinhvien) {
 		this.lop_sinhvien = lop_sinhvien;
+	}
+
+	@OneToMany(mappedBy = "sinhVien", fetch = FetchType.LAZY)
+	private List<Diem> diems;
+
+	public List<Diem> getDiems() {
+		return diems;
+	}
+
+	public void setDiems(List<Diem> diems) {
+		this.diems = diems;
 	}
 
 	public SinhVien() {
