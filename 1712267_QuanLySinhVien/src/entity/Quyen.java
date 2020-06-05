@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,7 +14,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "quyen")
-public class Quyen {
+public class Quyen implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +30,9 @@ public class Quyen {
 
 	@OneToMany(mappedBy = "quyen_sinhvien", fetch = FetchType.LAZY)
 	private List<SinhVien> sinhViens;
+
+	@OneToMany(mappedBy = "quyen_giaovu", fetch = FetchType.LAZY)
+	private List<GiaoVu> giaoVus;
 
 	public Quyen() {
 
@@ -69,6 +75,14 @@ public class Quyen {
 
 	public void setSinhViens(List<SinhVien> sinhViens) {
 		this.sinhViens = sinhViens;
+	}
+
+	public List<GiaoVu> getGiaoVus() {
+		return giaoVus;
+	}
+
+	public void setGiaoVus(List<GiaoVu> giaoVus) {
+		this.giaoVus = giaoVus;
 	}
 
 }

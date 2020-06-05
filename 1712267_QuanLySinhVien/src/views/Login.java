@@ -12,6 +12,7 @@ import constants.AlertConstants;
 import dao.GiaoVuDao;
 import dao.SinhVienDao;
 import entity.DSSV_MON;
+import entity.Diem;
 import entity.GiaoVu;
 import entity.SinhVien;
 import views.lecturer.LecturerDashBoard;
@@ -230,8 +231,12 @@ public class Login extends JFrame {
 			System.out.println("TK Mặc Định Đã Tồn Tại.");
 			List<SinhVien> sinhViens = sinhVienDao.findAll();
 			for (SinhVien student : sinhViens) {
+				System.out.println(student.get_mssv());
 				for (DSSV_MON dssv_MON : student.getDssv_MON()) {
 					System.out.println(dssv_MON.get_dssvNo() + " " + dssv_MON.get_malopMon());
+				}
+				for (Diem diem : student.getDiems()) {
+					System.out.println(diem.get_gk() + " " + diem.get_ck());
 				}
 			}
 		}
@@ -285,7 +290,7 @@ public class Login extends JFrame {
 			GiaoVuDao giaoVuDao = new GiaoVuDao();
 			GiaoVu giaoVu = new GiaoVu();
 			giaoVu.set_msgv(userName);
-			giaoVu.set_msgv(password);
+			giaoVu.set_password(password);
 			List<GiaoVu> giaoVus = giaoVuDao.findAll();
 
 			GiaoVu foundGiaoVu = new GiaoVu();

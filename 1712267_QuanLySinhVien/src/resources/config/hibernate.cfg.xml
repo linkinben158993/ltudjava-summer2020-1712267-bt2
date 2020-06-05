@@ -15,5 +15,15 @@
 		<property name="hibernate.connection.url">jdbc:mysql://127.0.0.1:3306/1712267_quanlysinhvien</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">Thienanvip@321</property>
+
+<!-- 		<mapping class="entity.DCHP" />
+		<mapping class="entity.Diem" />
+		<mapping class="entity.DSL_MON" />
+		<mapping class="entity.DSSV_MON" />
+		<mapping class="entity.GiaoVu" />
+		<mapping class="entity.Lop" />
+		<mapping class="entity.Mon" />
+		<mapping class="entity.Quyen" />
+		<mapping class="entity.SinhVien" /> -->
 	</session-factory>
 </hibernate-configuration>

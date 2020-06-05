@@ -20,6 +20,7 @@ public class Diem implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ma_diem")
 	private int _diemNo;
 
 	@Column(name = "ma_mon")

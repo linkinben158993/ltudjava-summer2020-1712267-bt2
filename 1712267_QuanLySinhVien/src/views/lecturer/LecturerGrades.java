@@ -24,6 +24,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
 public class LecturerGrades extends JFrame {
 
@@ -35,6 +37,7 @@ public class LecturerGrades extends JFrame {
 
 	public int draggedAtX;
 	public int draggedAtY;
+	private JTable table;
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -88,7 +91,7 @@ public class LecturerGrades extends JFrame {
 		JPanel panelImport = new JPanel();
 		panelImport.setLayout(null);
 		panelImport.setBackground(Color.WHITE);
-		panelImport.setBounds(120, 5, 100, 110);
+		panelImport.setBounds(10, 11, 100, 110);
 		contentPane.add(panelImport);
 		JLabel lblNhpFile = new JLabel("Nhập File CSV", SwingConstants.CENTER);
 		lblNhpFile.setForeground(Color.BLACK);
@@ -100,15 +103,15 @@ public class LecturerGrades extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				dispose();
-				
+
 				FileParser fileParser = new FileParser();
-				
+
 				JFileChooser jFileChooser = genericStuff.chooseFile("Chọn File CSV Để Thêm Điểm!");
 				int result = jFileChooser.showSaveDialog(null);
-				
-				if(result == JFileChooser.APPROVE_OPTION) {
+
+				if (result == JFileChooser.APPROVE_OPTION) {
 					List<Diem> diems = fileParser.readFromCSV_Lop(jFileChooser.getSelectedFile().getAbsolutePath());
-					
+
 					if (diems.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Nhập điểm thất bại!");
 						LecturerGrades lecturerGrades = new LecturerGrades(giaoVu);
@@ -118,8 +121,7 @@ public class LecturerGrades extends JFrame {
 						LecturerGrades lecturerGrades = new LecturerGrades(giaoVu);
 						genericStuff.call_frame(lecturerGrades);
 					}
-				}
-				else {
+				} else {
 					LecturerGrades lecturerGrades = new LecturerGrades(giaoVu);
 					genericStuff.call_frame(lecturerGrades);
 				}
@@ -137,7 +139,7 @@ public class LecturerGrades extends JFrame {
 		JPanel panel_QuayLai = new JPanel();
 		panel_QuayLai.setLayout(null);
 		panel_QuayLai.setBackground(Color.WHITE);
-		panel_QuayLai.setBounds(10, 5, 100, 110);
+		panel_QuayLai.setBounds(10, 240, 100, 110);
 		contentPane.add(panel_QuayLai);
 		JLabel lblQuayLi = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblQuayLi.setForeground(Color.BLACK);
@@ -161,6 +163,17 @@ public class LecturerGrades extends JFrame {
 		genericStuff.hover(lblIconBack, lblQuayLi, panel_QuayLai, new Color(230, 230, 250), Color.LIGHT_GRAY,
 				Color.BLACK, Color.WHITE);
 		panel_QuayLai.add(lblIconBack);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(120, 11, 270, 231);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(407, 11, 270, 231);
+		contentPane.add(scrollPane_1);
 
 	}
 
@@ -168,13 +181,17 @@ public class LecturerGrades extends JFrame {
 		setGiaoVu(giaoVu);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 700, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		JLabel lblLtudJava = new JLabel("2020 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
+		lblLtudJava.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLtudJava.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblLtudJava.setBounds(133, 347, 330, 14);
+		contentPane.add(lblLtudJava);
 		event_listener();
 	}
-
 }
