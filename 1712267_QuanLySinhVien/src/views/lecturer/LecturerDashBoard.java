@@ -72,10 +72,10 @@ public class LecturerDashBoard extends JFrame {
 		panel.add(panel_2);
 		panel_2.setLayout(null);
 
-		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 11, 100, 100);
-		panel_2.add(panel_1);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		JPanel panelDashIcon = new JPanel();
+		panelDashIcon.setBounds(10, 11, 100, 100);
+		panel_2.add(panelDashIcon);
+		panelDashIcon.setLayout(new BorderLayout(0, 0));
 
 		JLabel DashIcon = new JLabel("");
 		DashIcon.setBackground(Color.GRAY);
@@ -85,7 +85,7 @@ public class LecturerDashBoard extends JFrame {
 		Image newImage_Dash = image_Dash.getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH);
 		DashIcon.setIcon(new ImageIcon(newImage_Dash));
 		DashIcon.setOpaque(true);
-		panel_1.add(DashIcon, BorderLayout.CENTER);
+		panelDashIcon.add(DashIcon, BorderLayout.CENTER);
 
 		JLabel lblNewLabel_1 = new JLabel("\"Never Give Power To The Big Man\"");
 		lblNewLabel_1.setFont(new Font("Times New Roman", Font.BOLD, 14));

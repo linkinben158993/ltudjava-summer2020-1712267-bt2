@@ -11,7 +11,6 @@ import constants.AlertConstants;
 import entity.GiaoVu;
 import entity.SinhVien;
 import views.lecturer.LecturerDashBoard;
-import views.lecturer.LecturerStudents;
 
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
@@ -46,6 +45,14 @@ public class AlertDialog extends JFrame {
 
 	public void setGiaoVu(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
+	}
+
+	public SinhVien getSinhVien() {
+		return sinhVien;
+	}
+
+	public void setSinhVien(SinhVien sinhVien) {
+		this.sinhVien = sinhVien;
 	}
 
 	public static void main(String[] args) {
@@ -129,7 +136,7 @@ public class AlertDialog extends JFrame {
 	 */
 	public AlertDialog(String message, String path) {
 		this.message = message;
-		
+
 		init(path);
 
 		if (message.equals(AlertConstants.LEAVING_SO_SOON)) {
@@ -145,7 +152,7 @@ public class AlertDialog extends JFrame {
 				}
 			});
 		}
-		if (message.equals(AlertConstants.BLANK_FIELD_WARNING)) {
+		if (message.equals(AlertConstants.BLANK_FIELD_WARNING) || message.equals(AlertConstants.WRONG_FIELD_WARNINGS)) {
 			Button button_relogin = new Button("Đăng Nhập Lại");
 			button_relogin.addMouseListener(new MouseAdapter() {
 				@Override
@@ -164,13 +171,13 @@ public class AlertDialog extends JFrame {
 
 	// Đăng xuất của Lecturer
 	public AlertDialog(String message, String path, GiaoVu giaoVu) {
-		
+
 		this.message = message;
 		this.giaoVu = giaoVu;
 		setGiaoVu(giaoVu);
-		
+
 		init(path);
-		
+
 		if (message.equals(AlertConstants.LOG_OUT_WARNINGS)) {
 			Button button_relogin = new Button("Đăng Xuất");
 			button_relogin.addMouseListener(new MouseAdapter() {
@@ -187,7 +194,32 @@ public class AlertDialog extends JFrame {
 			contentPane.add(button_relogin);
 		}
 	}
-	
+
+	public AlertDialog(String message, String path, SinhVien sinhVien) {
+
+		this.message = message;
+		this.sinhVien = sinhVien;
+		setGiaoVu(giaoVu);
+
+		init(path);
+
+		if (message.equals(AlertConstants.LOG_OUT_WARNINGS)) {
+			Button button_relogin = new Button("Đăng Xuất");
+			button_relogin.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					dispose();
+					Login home = new Login();
+					genericStuff.call_frame(home);
+				}
+			});
+			button_relogin.setForeground(Color.WHITE);
+			button_relogin.setBackground(Color.GRAY);
+			button_relogin.setBounds(100, 252, 150, 20);
+			contentPane.add(button_relogin);
+		}
+	}
+
 	public AlertDialog(String path) {
 		init(path);
 	}

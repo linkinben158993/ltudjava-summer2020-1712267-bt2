@@ -2,12 +2,19 @@ package views.lecturer;
 
 import java.awt.EventQueue;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
+import dao.DSLMDao;
+import dao.DiemDao;
+import entity.DSL_MON;
 import entity.Diem;
 import entity.GiaoVu;
 import util.FileParser;
@@ -26,6 +33,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.JComboBox;
+import javax.swing.JSeparator;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class LecturerGrades extends JFrame {
 
@@ -37,7 +49,21 @@ public class LecturerGrades extends JFrame {
 
 	public int draggedAtX;
 	public int draggedAtY;
-	private JTable table;
+
+	private List<Diem> diems = new DiemDao().findAll();
+	private JTable table_Diem;
+	private DefaultTableModel tableModel_Diem;
+	private JTable table_ThongKe;
+	private DefaultTableModel tableModel_ThongKe;
+	private JTable table_PhanTram;
+	private DefaultTableModel tableModel_PhanTram;
+
+	@SuppressWarnings("rawtypes")
+	private JComboBox comboBox_ClassFilter;
+	@SuppressWarnings("rawtypes")
+	private JComboBox comboBox_Stats;
+	@SuppressWarnings("rawtypes")
+	private JComboBox comboBox_Percentage;
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -87,11 +113,12 @@ public class LecturerGrades extends JFrame {
 		});
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void event_listener() {
 		JPanel panelImport = new JPanel();
 		panelImport.setLayout(null);
 		panelImport.setBackground(Color.WHITE);
-		panelImport.setBounds(10, 11, 100, 110);
+		panelImport.setBounds(10, 151, 100, 110);
 		contentPane.add(panelImport);
 		JLabel lblNhpFile = new JLabel("Nhập File CSV", SwingConstants.CENTER);
 		lblNhpFile.setForeground(Color.BLACK);
@@ -139,7 +166,7 @@ public class LecturerGrades extends JFrame {
 		JPanel panel_QuayLai = new JPanel();
 		panel_QuayLai.setLayout(null);
 		panel_QuayLai.setBackground(Color.WHITE);
-		panel_QuayLai.setBounds(10, 240, 100, 110);
+		panel_QuayLai.setBounds(10, 412, 100, 110);
 		contentPane.add(panel_QuayLai);
 		JLabel lblQuayLi = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblQuayLi.setForeground(Color.BLACK);
@@ -163,17 +190,137 @@ public class LecturerGrades extends JFrame {
 		genericStuff.hover(lblIconBack, lblQuayLi, panel_QuayLai, new Color(230, 230, 250), Color.LIGHT_GRAY,
 				Color.BLACK, Color.WHITE);
 		panel_QuayLai.add(lblIconBack);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(120, 11, 270, 231);
-		contentPane.add(scrollPane);
-		
-		table = new JTable();
-		scrollPane.setViewportView(table);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(407, 11, 270, 231);
-		contentPane.add(scrollPane_1);
+
+		List<DSL_MON> dsl_MONs = new DSLMDao().findAll();
+		String[] option_lopMon = new String[dsl_MONs.size() + 1];
+		option_lopMon[0] = "Tất Cả";
+		for (int i = 1; i < option_lopMon.length; ++i) {
+			option_lopMon[i] = dsl_MONs.get(i - 1).getMalop_mon();
+		}
+		ComboBoxModel boxModel_Class = new DefaultComboBoxModel(option_lopMon);
+		ComboBoxModel boxModel_Stats = new DefaultComboBoxModel(option_lopMon);
+		ComboBoxModel boxModel_Percent = new DefaultComboBoxModel(option_lopMon);
+
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+		JLabel lblBangDiem = new JLabel("Bảng Điểm:");
+		lblBangDiem.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblBangDiem.setBounds(10, 12, 100, 30);
+		contentPane.add(lblBangDiem);
+		JLabel lblClassFilter = new JLabel("Lọc theo lớp:");
+		lblClassFilter.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+		lblClassFilter.setBounds(10, 53, 100, 14);
+		contentPane.add(lblClassFilter);
+		comboBox_ClassFilter = new JComboBox(boxModel_Class);
+		comboBox_ClassFilter.setSelectedItem(null);
+		comboBox_ClassFilter.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (comboBox_ClassFilter.getSelectedItem().toString().equals("Tất Cả")) {
+					table_Diem.setModel(drawTable_Diem(diems));
+					resizeTableDiem(table_Diem, centerRenderer);
+				} else {
+					table_Diem.setModel(drawTable_Diem(
+							new Diem().findByML_Mon(diems, comboBox_ClassFilter.getSelectedItem().toString())));
+					resizeTableDiem(table_Diem, centerRenderer);
+				}
+			}
+		});
+		comboBox_ClassFilter.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		comboBox_ClassFilter.setMaximumRowCount(3);
+		comboBox_ClassFilter.setBounds(10, 78, 100, 20);
+		contentPane.add(comboBox_ClassFilter);
+		JScrollPane scrollPane_Diem = new JScrollPane();
+		scrollPane_Diem.setBounds(120, 11, 760, 250);
+		contentPane.add(scrollPane_Diem);
+		table_Diem = new JTable();
+		table_Diem.setModel(drawTable_Diem(diems));
+		scrollPane_Diem.setViewportView(table_Diem);
+		resizeTableDiem(table_Diem, centerRenderer);
+		JSeparator separator_Grades = new JSeparator();
+		separator_Grades.setBounds(10, 11, 100, 2);
+		contentPane.add(separator_Grades);
+
+		JLabel lblThongKe = new JLabel("Thống Kê:");
+		lblThongKe.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblThongKe.setBounds(10, 272, 100, 30);
+		contentPane.add(lblThongKe);
+		JLabel lblStatsFilter = new JLabel("Lọc theo lớp:");
+		lblStatsFilter.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+		lblStatsFilter.setBounds(10, 313, 100, 14);
+		contentPane.add(lblStatsFilter);
+		comboBox_Stats = new JComboBox(boxModel_Stats);
+		comboBox_Stats.setSelectedItem(null);
+		comboBox_Stats.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				if (comboBox_Stats.getSelectedItem().toString().equals("Tất Cả")) {
+					table_ThongKe.setModel(drawTable_ThongKe(diems));
+					resizeTableThongKe(table_ThongKe, centerRenderer);
+				} else {
+					table_ThongKe.setModel(drawTable_ThongKe(
+							new Diem().findByML_Mon(diems, comboBox_Stats.getSelectedItem().toString())));
+					resizeTableThongKe(table_ThongKe, centerRenderer);
+				}
+			}
+		});
+		comboBox_Stats.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		comboBox_Stats.setMaximumRowCount(3);
+		comboBox_Stats.setBounds(10, 338, 100, 20);
+		contentPane.add(comboBox_Stats);
+		JScrollPane scrollPane_Thongke = new JScrollPane();
+		scrollPane_Thongke.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_Thongke.setBounds(120, 272, 450, 250);
+		contentPane.add(scrollPane_Thongke);
+		table_ThongKe = new JTable();
+		table_ThongKe.setModel(drawTable_ThongKe(diems));
+		resizeTableThongKe(table_ThongKe, centerRenderer);
+		scrollPane_Thongke.setViewportView(table_ThongKe);
+
+		JSeparator separator_Stats = new JSeparator();
+		separator_Stats.setBounds(10, 272, 100, 2);
+		contentPane.add(separator_Stats);
+
+		JLabel lblPercentage = new JLabel("Lọc theo lớp:");
+		lblPercentage.setFont(new Font("Times New Roman", Font.PLAIN, 12));
+		lblPercentage.setBounds(580, 458, 100, 14);
+		contentPane.add(lblPercentage);
+		comboBox_Percentage = new JComboBox(boxModel_Percent);
+		comboBox_Percentage.setSelectedItem(null);
+		comboBox_Percentage.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (comboBox_Percentage.getSelectedItem().toString().equals("Tất Cả")) {
+					table_PhanTram.setModel(drawTable_ThongKePhanTram(diems));
+					resizeTablePhanTram(table_PhanTram, centerRenderer);
+
+				} else {
+					table_PhanTram.setModel(drawTable_ThongKePhanTram(
+							new Diem().findByML_Mon(diems, comboBox_Percentage.getSelectedItem().toString())));
+					resizeTablePhanTram(table_PhanTram, centerRenderer);
+				}
+			}
+		});
+		comboBox_Percentage.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		comboBox_Percentage.setMaximumRowCount(3);
+		comboBox_Percentage.setBounds(580, 483, 100, 20);
+		contentPane.add(comboBox_Percentage);
+		JScrollPane scrollPane_PhanTram = new JScrollPane();
+		scrollPane_PhanTram.setBounds(580, 272, 300, 175);
+		contentPane.add(scrollPane_PhanTram);
+		table_PhanTram = new JTable();
+		table_PhanTram.setModel(drawTable_ThongKePhanTram(diems));
+		scrollPane_PhanTram.setViewportView(table_PhanTram);
+		resizeTablePhanTram(table_PhanTram, centerRenderer);
+		JSeparator separator_Cred = new JSeparator();
+		separator_Cred.setBounds(291, 547, 330, 2);
+		contentPane.add(separator_Cred);
+
+		JLabel lblLtudJava = new JLabel("2020 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
+		lblLtudJava.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLtudJava.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblLtudJava.setBounds(291, 547, 330, 14);
+		contentPane.add(lblLtudJava);
 
 	}
 
@@ -181,17 +328,158 @@ public class LecturerGrades extends JFrame {
 		setGiaoVu(giaoVu);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 400);
+		setBounds(100, 100, 900, 600);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		JLabel lblLtudJava = new JLabel("2020 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
-		lblLtudJava.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLtudJava.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblLtudJava.setBounds(133, 347, 330, 14);
-		contentPane.add(lblLtudJava);
 		event_listener();
 	}
+
+	private DefaultTableModel drawTable_Diem(List<Diem> diems) {
+		if (diems.isEmpty()) {
+			String[] columns = { "STT", "Mã Sinh Viên", "Họ Tên", "Mã Lớp", "Lớp Môn", "Giữa Kì", "Cuối Kì", "Khác",
+					"Tổng" };
+			tableModel_Diem = new DefaultTableModel(columns, 0);
+			tableModel_Diem.addRow(
+					new String[] { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A" });
+		} else {
+			String[] columns = { "STT", "Mã Sinh Viên", "Họ Tên", "Mã Lớp", "Lớp Môn", "Giữa Kì", "Cuối Kì", "Khác",
+					"Tổng" };
+			tableModel_Diem = new DefaultTableModel(columns, 0);
+			int i = 0;
+
+			for (Diem diem : diems) {
+				i++;
+				String[] data = { String.valueOf(i), diem.get_mssv(), diem.get_tenSinhVien(),
+						diem.getSinhVien().getMa_lop(), diem.getMaLop_mon(), String.valueOf(diem.get_gk()),
+						String.valueOf(diem.get_ck()), String.valueOf(diem.get_khac()),
+						String.valueOf(diem.get_tongDiem()) };
+				tableModel_Diem.addRow(data);
+			}
+		}
+		return tableModel_Diem;
+	}
+
+	private DefaultTableModel drawTable_ThongKe(List<Diem> diems) {
+		if (diems.isEmpty()) {
+			String[] columns = { "STT", "Mã Sinh Viên", "Họ Tên", "Mã Lớp", "Lớp Môn", "Tổng", "Tình Trạng" };
+			tableModel_ThongKe = new DefaultTableModel(columns, 0);
+			tableModel_ThongKe.addRow(new String[] { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A" });
+		} else {
+			String[] columns = { "STT", "Mã Sinh Viên", "Họ Tên", "Mã Lớp", "Lớp Môn", "Tổng", "Tình Trạng" };
+			tableModel_ThongKe = new DefaultTableModel(columns, 0);
+			int i = 0;
+
+			for (Diem diem : diems) {
+				i++;
+				System.out.println(diem.getMaLop_mon());
+				if (diem.get_tongDiem() < 4.75) {
+					String[] data = { String.valueOf(i), diem.get_mssv(), diem.get_tenSinhVien(),
+							diem.getSinhVien().getMa_lop(), diem.getMaLop_mon(), String.valueOf(diem.get_tongDiem()),
+							"Rớt Môn" };
+					tableModel_ThongKe.addRow(data);
+				} else {
+					String[] data = { String.valueOf(i), diem.get_mssv(), diem.get_tenSinhVien(),
+							diem.getSinhVien().getMa_lop(), diem.getMaLop_mon(), String.valueOf(diem.get_tongDiem()),
+							"Qua Môn" };
+					tableModel_ThongKe.addRow(data);
+				}
+			}
+		}
+
+		return tableModel_ThongKe;
+	}
+
+	@SuppressWarnings("static-access")
+	private DefaultTableModel drawTable_ThongKePhanTram(List<Diem> diems) {
+		if (diems.isEmpty()) {
+			String[] columns = { "STT", "Lớp", "Đậu", "Rớt" };
+			tableModel_PhanTram = new DefaultTableModel(columns, 0);
+			tableModel_PhanTram.addRow(new String[] { "N/A", "N/A", "N/A", "N/A" });
+		} else {
+			int _rotCount = 0;
+			int _dauCount = 0;
+			for (Diem diem : diems) {
+				if (diem.get_ck() < 4.75) {
+					_rotCount++;
+				} else {
+					_dauCount++;
+				}
+			}
+			float _rot = 100 * (float) _rotCount / diems.size();
+			float _dau = 100 * (float) _dauCount / diems.size();
+
+			String[] columns = { "STT", "Lớp", "Đậu", "Rớt" };
+			tableModel_PhanTram = new DefaultTableModel(columns, 0);
+			int i = 1;
+			tableModel_PhanTram.addRow(
+					new String[] { String.valueOf(i), "Tất Cả", String.valueOf(_dau * 100).format("%.1f", _dau) + "%",
+							String.valueOf(_rot * 100).format("%.1f", _rot) + "%" });
+
+			_rotCount = 0;
+			_dauCount = 0;
+			List<DSL_MON> dsl_MONs = new DSLMDao().findAll();
+			for (DSL_MON dsl_MON : dsl_MONs) {
+				int _lopCount = 0;
+				for (Diem diem : diems) {
+					if (diem.getMaLop_mon().equals(dsl_MON.getMalop_mon())) {
+						_lopCount++;
+						if (diem.get_ck() < 4.75) {
+							_rotCount++;
+						} else {
+							_dauCount++;
+						}
+					}
+				}
+				if (_lopCount == 0) {
+					continue;
+				} else {
+					_rot = 100 * (float) _rotCount / _lopCount;
+					_dau = 100 * (float) _dauCount / _lopCount;
+					tableModel_PhanTram.addRow(new String[] { String.valueOf(++i), dsl_MON.getMalop_mon(),
+							String.valueOf(_dau).format("%.1f", _dau) + "%",
+							String.valueOf(_rot).format("%.1f", _rot) + "%" });
+				}
+			}
+		}
+
+		return tableModel_PhanTram;
+	}
+
+	private void resizeTableDiem(JTable jTable, DefaultTableCellRenderer centerRenderer) {
+		jTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+		jTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+		jTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		jTable.getColumnModel().getColumn(4).setPreferredWidth(150);
+		jTable.getColumnModel().getColumn(5).setPreferredWidth(60);
+		jTable.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(6).setPreferredWidth(60);
+		jTable.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(7).setPreferredWidth(60);
+		jTable.getColumnModel().getColumn(7).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(8).setPreferredWidth(60);
+		jTable.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
+	}
+
+	private void resizeTableThongKe(JTable jTable, DefaultTableCellRenderer centerRenderer) {
+		jTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(1).setPreferredWidth(120);
+		jTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+		jTable.getColumnModel().getColumn(3).setPreferredWidth(80);
+		jTable.getColumnModel().getColumn(4).setPreferredWidth(150);
+		jTable.getColumnModel().getColumn(5).setPreferredWidth(40);
+		jTable.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(6).setPreferredWidth(100);
+	}
+
+	private void resizeTablePhanTram(JTable jTable, DefaultTableCellRenderer centerRenderer) {
+		jTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+		jTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+	}
+
 }

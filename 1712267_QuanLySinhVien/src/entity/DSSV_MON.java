@@ -34,6 +34,18 @@ public class DSSV_MON implements Serializable {
 	@Column(name = "malop_mon")
 	private String _malopMon;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "malop_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "malop_mon")
+	private DSL_MON dsl_MON;
+
+	public DSL_MON getDsl_MON() {
+		return dsl_MON;
+	}
+
+	public void setDsl_MON(DSL_MON dsl_MON) {
+		this.dsl_MON = dsl_MON;
+	}
+
 	@Column(name = "ma_mon")
 	private String _maMon;
 
@@ -41,11 +53,11 @@ public class DSSV_MON implements Serializable {
 	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_mon")
 	private Mon mon_dssinhvien;
 
-	public Mon getMon() {
+	public Mon getMon_dssinhvien() {
 		return mon_dssinhvien;
 	}
 
-	public void setMon(Mon mon_dssinhvien) {
+	public void setMon_dssinhvien(Mon mon_dssinhvien) {
 		this.mon_dssinhvien = mon_dssinhvien;
 	}
 

@@ -63,6 +63,17 @@ public class DSL_MON implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "dsl_MON", fetch = FetchType.LAZY)
+	private List<DSSV_MON> dssv_Mons;
+
+	public List<DSSV_MON> getDssv_Mons() {
+		return dssv_Mons;
+	}
+
+	public void setDssv_Mons(List<DSSV_MON> dssv_Mons) {
+		this.dssv_Mons = dssv_Mons;
+	}
+
+	@OneToMany(mappedBy = "dsl_MON", fetch = FetchType.LAZY)
 	private List<DCHP> dchps;
 
 	public List<DCHP> getDchps() {

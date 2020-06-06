@@ -1,15 +1,12 @@
 package views.lecturer;
 
 import java.awt.Color;
-import java.awt.Dialog.ModalityType;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -215,16 +212,7 @@ public class LecturerSettings extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				LecturerChangePassword changePassword = new LecturerChangePassword(giaoVu);
-				changePassword.setModalityType(ModalityType.APPLICATION_MODAL);
-				changePassword.setLocationRelativeTo(null);
-				changePassword.setVisible(true);
-
-				changePassword.addWindowListener(new WindowAdapter() {
-					@Override
-					public void windowClosed(WindowEvent e) {
-						dispose();
-					}
-				});
+				genericStuff.call_dialog(changePassword);
 			}
 		});
 		lblIconChangePw.setBounds(10, 11, 80, 80);

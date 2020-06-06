@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +27,18 @@ public class Diem implements Serializable {
 
 	@Column(name = "ma_mon")
 	private String _maMon;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_mon")
+	private Mon mon_diem;
+
+	public Mon getMon_diem() {
+		return mon_diem;
+	}
+
+	public void setMon_diem(Mon mon_diem) {
+		this.mon_diem = mon_diem;
+	}
 
 	@Column(name = "ten_sinhvien")
 	private String _tenSinhVien;
@@ -145,5 +159,15 @@ public class Diem implements Serializable {
 
 	public void set_tenSinhVien(String _tenSinhVien) {
 		this._tenSinhVien = _tenSinhVien;
+	}
+
+	public List<Diem> findByML_Mon(List<Diem> diems, String ml_mon) {
+		List<Diem> diems2 = new ArrayList<Diem>();
+		for (Diem diem : diems) {
+			if (diem.getMaLop_mon().equals(ml_mon)) {
+				diems2.add(diem);
+			}
+		}
+		return diems2;
 	}
 }

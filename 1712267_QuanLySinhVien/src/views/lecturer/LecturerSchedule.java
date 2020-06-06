@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import dao.DCHPDao;
 import dao.DSLMDao;
 import dao.DSSVMDao;
-import dao.MonDao;
 import entity.DCHP;
 import entity.DSL_MON;
 import entity.DSSV_MON;
@@ -47,9 +46,10 @@ public class LecturerSchedule extends JFrame {
 	private JPanel contentPane;
 	private GenericStuff genericStuff = new GenericStuff();
 	private GiaoVu giaoVu;
-	private List<Mon> mons = new MonDao().findAll();
 
-	private DefaultTableModel tableModel;
+	private DefaultTableModel tableModel_TKB;
+	private DefaultTableModel tableModel_DCHP;
+
 	private JTable tbl_TKB;
 	private JTable tbl_DCHP;
 
@@ -60,10 +60,9 @@ public class LecturerSchedule extends JFrame {
 	public void setGiaoVu(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
 	}
-	
+
 	public int draggedAtX;
 	public int draggedAtY;
-	
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -289,38 +288,38 @@ public class LecturerSchedule extends JFrame {
 
 	private DefaultTableModel draw_TKB(List<DSL_MON> dsl_MONs) {
 		String[] columns = { "STT", "Mã Môn", "Mã Lớp", "Phòng Học", "Lớp Môn" };
-		tableModel = new DefaultTableModel(columns, 0);
+		tableModel_TKB = new DefaultTableModel(columns, 0);
 		int i = 0;
 		for (DSL_MON item : dsl_MONs) {
 			i++;
 			String[] data = { String.valueOf(i), item.get_maMon(), item.get_maLop(), item.get_phongHoc(),
 					item.getMalop_mon() };
-			tableModel.addRow(data);
+			tableModel_TKB.addRow(data);
 		}
-		return tableModel;
+		return tableModel_TKB;
 	}
 
 	private DefaultTableModel draw_DCHP(List<DCHP> dchps) {
 		String[] columns = { "STT", "Mã Sinh Viên", "Mã Lớp", "Lớp Môn", "Yêu Cầu" };
-		tableModel = new DefaultTableModel(columns, 0);
+		tableModel_DCHP = new DefaultTableModel(columns, 0);
 		int i = 0;
 		for (DCHP item : dchps) {
 			i++;
 			if (item.get_mayeuCau() == 1) {
 				String[] data = { String.valueOf(i), item.get_masinhVien(), item.get_malopMon(), "Thêm",
 						item.get_noiDung() };
-				tableModel.addRow(data);
+				tableModel_DCHP.addRow(data);
 			} else if (item.get_mayeuCau() == 2) {
 				String[] data = { String.valueOf(i), item.get_masinhVien(), item.get_malopMon(), "Xóa",
 						item.get_noiDung() };
-				tableModel.addRow(data);
+				tableModel_DCHP.addRow(data);
 			}
 		}
-		return tableModel;
+		return tableModel_DCHP;
 	}
 
 	private void reSizeTable(JTable jTable, DefaultTableCellRenderer centerRenderer) {
-		jTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+		jTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		jTable.getColumnModel().getColumn(1).setPreferredWidth(120);
 		jTable.getColumnModel().getColumn(3).setPreferredWidth(120);
@@ -328,6 +327,7 @@ public class LecturerSchedule extends JFrame {
 		jTable.getColumnModel().getColumn(4).setPreferredWidth(180);
 	}
 
+	// Quét các trường được chọn trong bảng và duyệt yêu cầu của sinh viên
 	private void filterRequest(int[] selected) {
 		DCHPDao dchpDao = new DCHPDao();
 		DSSVMDao dssvmDao = new DSSVMDao();

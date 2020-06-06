@@ -11,11 +11,10 @@ import org.mindrot.jbcrypt.BCrypt;
 import constants.AlertConstants;
 import dao.GiaoVuDao;
 import dao.SinhVienDao;
-import entity.DSSV_MON;
-import entity.Diem;
 import entity.GiaoVu;
 import entity.SinhVien;
 import views.lecturer.LecturerDashBoard;
+import views.student.StudentDashBoard;
 
 import java.awt.Color;
 import java.awt.Button;
@@ -229,16 +228,16 @@ public class Login extends JFrame {
 					"1357902468", 1));
 		} else {
 			System.out.println("TK Mặc Định Đã Tồn Tại.");
-			List<SinhVien> sinhViens = sinhVienDao.findAll();
-			for (SinhVien student : sinhViens) {
-				System.out.println(student.get_mssv());
-				for (DSSV_MON dssv_MON : student.getDssv_MON()) {
-					System.out.println(dssv_MON.get_dssvNo() + " " + dssv_MON.get_malopMon());
-				}
-				for (Diem diem : student.getDiems()) {
-					System.out.println(diem.get_gk() + " " + diem.get_ck());
-				}
-			}
+//			List<SinhVien> sinhViens = sinhVienDao.findAll();
+//			for (SinhVien student : sinhViens) {
+//				System.out.println(student.get_mssv());
+//				for (DSSV_MON dssv_MON : student.getDssv_MON()) {
+//					System.out.println(dssv_MON.get_dssvNo() + " " + dssv_MON.get_malopMon());
+//				}
+//				for (Diem diem : student.getDiems()) {
+//					System.out.println(diem.get_gk() + " " + diem.get_ck());
+//				}
+//			}
 		}
 
 		// Khởi tạo các thành phần cần thiết
@@ -272,7 +271,6 @@ public class Login extends JFrame {
 			dispose();
 			alertDialog = new AlertDialog(AlertConstants.BLANK_FIELD_WARNING,
 					AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
-			genericStuff = new GenericStuff();
 			genericStuff.call_frame(alertDialog);
 		}
 
@@ -301,7 +299,6 @@ public class Login extends JFrame {
 				System.out.println("Không tìm thấy tài khoản!");
 				alertDialog = new AlertDialog(AlertConstants.NOTFOUND_WARNINGS,
 						AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
-				genericStuff = new GenericStuff();
 				genericStuff.call_frame(alertDialog);
 			} else {
 
@@ -313,21 +310,28 @@ public class Login extends JFrame {
 						System.out.println("Mật khẩu đúng!");
 						dispose();
 						LecturerDashBoard lecturerDashBoard = new LecturerDashBoard(foundGiaoVu);
-						genericStuff = new GenericStuff();
 						genericStuff.call_frame(lecturerDashBoard);
 					} else {
 						System.out.println("Mật khẩu sai!");
+						alertDialog = new AlertDialog(AlertConstants.WRONG_FIELD_WARNINGS,
+								AlertConstants.WRONG_FIELD_WARNINGS);
+						genericStuff.call_frame(alertDialog);
 					}
 				} else {
 					System.out.println("Tìm thấy tài khoản sinh viên!");
 					System.out.println(foundSinhVien.getQuyen_sinhvien().get_tenQuyen());
 					boolean pass = BCrypt.checkpw(password, foundSinhVien.get_password());
-					System.out.println(foundSinhVien.get_password());
 					if (pass) {
 						System.out.println("Mật khẩu đúng!");
+						dispose();
+						StudentDashBoard studentDashBoard = new StudentDashBoard(foundSinhVien);
+						genericStuff.call_frame(studentDashBoard);
 
 					} else {
 						System.out.println("Mật khẩu sai!");
+						alertDialog = new AlertDialog(AlertConstants.WRONG_FIELD_WARNINGS,
+								AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
+						genericStuff.call_frame(alertDialog);
 					}
 				}
 			}

@@ -1,11 +1,15 @@
 package views;
 
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,6 +36,18 @@ public class GenericStuff extends JFrame {
 		frame.setLocationRelativeTo(null);
 		frame.setUndecorated(true);
 		frame.setVisible(true);
+	}
+
+	public void call_dialog(JDialog jDialog) {
+		jDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+		jDialog.setLocationRelativeTo(null);
+		jDialog.setVisible(true);
+		jDialog.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				dispose();
+			}
+		});
 	}
 
 	public void hover(JLabel label, JLabel innerlabel, JPanel jPanel, Color colorHoverInner, Color colorHoverPanel,

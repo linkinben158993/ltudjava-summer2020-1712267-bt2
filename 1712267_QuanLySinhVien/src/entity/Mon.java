@@ -27,6 +27,17 @@ public class Mon implements Serializable {
 	@Column(name = "ma_mon")
 	private String _maMon;
 
+	@OneToMany(mappedBy = "mon_diem", fetch = FetchType.LAZY)
+	private List<Diem> diems;
+
+	public List<Diem> getDiems() {
+		return diems;
+	}
+
+	public void setDiems(List<Diem> diems) {
+		this.diems = diems;
+	}
+
 	@Column(name = "ten_mon")
 	private String _tenMon;
 

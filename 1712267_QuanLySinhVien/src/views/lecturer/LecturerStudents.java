@@ -416,7 +416,7 @@ public class LecturerStudents extends JFrame {
 		}
 
 		String[] options_LopMon = new String[strings_Lop_Mon.size()];
-		options_LopMon = strings_Lop_Mon.toArray(options_Lop);
+		options_LopMon = strings_Lop_Mon.toArray(options_LopMon);
 
 		ComboBoxModel boxModels_dslMon = new DefaultComboBoxModel(options_LopMon);
 		boxModels_dslMon.setSelectedItem(null);
