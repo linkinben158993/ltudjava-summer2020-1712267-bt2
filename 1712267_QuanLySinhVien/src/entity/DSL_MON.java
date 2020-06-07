@@ -84,6 +84,17 @@ public class DSL_MON implements Serializable {
 		this.dchps = dchps;
 	}
 
+	@OneToMany(mappedBy = "dsl_MON")
+	private List<PhucKhao> phucKhaos;
+
+	public List<PhucKhao> getPhucKhaos() {
+		return phucKhaos;
+	}
+
+	public void setPhucKhaos(List<PhucKhao> phucKhaos) {
+		this.phucKhaos = phucKhaos;
+	}
+
 	@Column(name = "malop_mon")
 	private String malop_mon;
 

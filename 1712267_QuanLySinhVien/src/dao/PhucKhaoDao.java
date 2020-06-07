@@ -13,28 +13,28 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.SinhVien;
+import entity.PhucKhao;
 import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
-public class SinhVienDao {
+public class PhucKhaoDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
-	public SinhVien findById(int id) {
+	public PhucKhao findById(int id) {
 		Session session = sessionFactory.openSession();
 		try {
-			return session.find(SinhVien.class, id);
+			return session.find(PhucKhao.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public void insert(SinhVien sinhVien) {
+	public void insert(PhucKhao phucKhao) {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			session.saveOrUpdate(sinhVien);
+			session.saveOrUpdate(phucKhao);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
@@ -46,8 +46,9 @@ public class SinhVienDao {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			SinhVien newGiaoVu = (SinhVien) session.get(SinhVien.class, id);
-			newGiaoVu.set_password(password);
+			// PhucKhao newPhucKhao = (PhucKhao) session.get(PhucKhao.class, id);
+			// Update tình trạng ở đây
+
 			trans.commit();
 			return 0;
 		} catch (Exception e) {
@@ -57,18 +58,18 @@ public class SinhVienDao {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<SinhVien> findAll() {
+	public List<PhucKhao> findAll() {
 		Session session = sessionFactory.openSession();
 		try {
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
-			CriteriaQuery query = (CriteriaQuery) builder.createQuery(SinhVien.class);
+			CriteriaQuery query = (CriteriaQuery) builder.createQuery(PhucKhao.class);
 
-			Root<SinhVien> root = (Root<SinhVien>) query.from(SinhVien.class);
+			Root<PhucKhao> root = (Root<PhucKhao>) query.from(PhucKhao.class);
 
 			query.select(root);
 
-			Query<SinhVien> list = session.createQuery(query);
+			Query<PhucKhao> list = session.createQuery(query);
 
 			return list.getResultList();
 

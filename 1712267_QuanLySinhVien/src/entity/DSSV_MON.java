@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -71,6 +72,17 @@ public class DSSV_MON implements Serializable {
 
 	public void setSinhVien(SinhVien sinhVien) {
 		this.sinhVien = sinhVien;
+	}
+
+	@OneToMany(mappedBy = "dssv_MON")
+	private List<PhucKhao> phucKhaos;
+
+	public List<PhucKhao> getPhucKhaos() {
+		return phucKhaos;
+	}
+
+	public void setPhucKhaos(List<PhucKhao> phucKhaos) {
+		this.phucKhaos = phucKhaos;
 	}
 
 	public int get_dssvNo() {

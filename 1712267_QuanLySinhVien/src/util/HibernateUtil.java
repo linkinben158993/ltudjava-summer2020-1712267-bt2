@@ -16,12 +16,13 @@ import entity.DSL_MON;
 import entity.GiaoVu;
 import entity.Lop;
 import entity.Mon;
+import entity.PhucKhao;
 import entity.Quyen;
 import entity.SinhVien;
 
 public class HibernateUtil {
 	private static Logger logger = Logger.getLogger(HibernateUtil.class);
-	
+
 	private static final SessionFactory sessionFactory = buildSessionFactory();
 
 	@SuppressWarnings("static-access")
@@ -30,7 +31,6 @@ public class HibernateUtil {
 			// Tạo SessionFactory from hibernate.cfg.xml
 			Configuration configuration = new Configuration();
 			configuration.configure("/resources/config/hibernate.cfg.xml");
-			
 
 			// Configure các class.
 			configuration.addAnnotatedClass(Quyen.class);
@@ -42,7 +42,8 @@ public class HibernateUtil {
 			configuration.addAnnotatedClass(DSL_MON.class);
 			configuration.addAnnotatedClass(DCHP.class);
 			configuration.addAnnotatedClass(Diem.class);
-			
+			configuration.addAnnotatedClass(PhucKhao.class);
+
 			// Chỉ show lỗi không show debug log của thư viện log4j
 			logger.getRootLogger().setLevel(Level.ERROR);
 

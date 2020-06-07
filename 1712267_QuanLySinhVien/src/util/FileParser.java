@@ -197,6 +197,7 @@ public class FileParser {
 			} else {
 				Diem diem = new Diem();
 				diem.setMaLop_mon(dsl_MON.getMalop_mon());
+				diem.set_maMon(dsl_MON.getMalop_mon().split("-")[1]);
 				diem.set_mssv(parsedStuff.get(i)[1]);
 				diem.set_tenSinhVien(parsedStuff.get(i)[2]);
 				diem.set_gk(Float.parseFloat(parsedStuff.get(i)[3]));

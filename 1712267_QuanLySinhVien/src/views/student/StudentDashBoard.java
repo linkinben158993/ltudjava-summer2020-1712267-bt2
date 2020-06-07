@@ -61,6 +61,34 @@ public class StudentDashBoard extends JFrame {
 		});
 	}
 
+	public StudentDashBoard(SinhVien sinhVien) {
+		this.sinhVien = sinhVien;
+
+		init();
+
+		// Lấy vị trí hiện tại của con tr�? JFrame
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				draggedAtX = e.getX();
+				draggedAtY = e.getY();
+			}
+		});
+		// Kéo thả Jpanel khi đã có vị trí hiện tại của con JFrame e.getXOnScreen()
+		// e.getYOnScreen() trên màn hình
+		addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				int x = e.getXOnScreen();
+				int y = e.getYOnScreen();
+				// Set location cho JFrame dựa trên vị trí con tr�? chuột đang nằm ở JFrame và
+				// vị
+				// trí của JFrame trên màn hình
+				setLocation(x - draggedAtX, y - draggedAtY);
+			}
+		});
+	}
+
 	private void event_listener() {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -202,6 +230,9 @@ public class StudentDashBoard extends JFrame {
 		lblIconYeuCau.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				dispose();
+				StudentRequest studentRequest = new StudentRequest(sinhVien);
+				genericStuff.call_frame(studentRequest);
 			}
 		});
 		lblIconYeuCau.setHorizontalAlignment(SwingConstants.CENTER);
@@ -228,6 +259,9 @@ public class StudentDashBoard extends JFrame {
 		lblIconCaiDat.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				dispose();
+				StudentSettings studentSettings = new StudentSettings(sinhVien);
+				genericStuff.call_frame(studentSettings);
 			}
 		});
 		lblIconCaiDat.setHorizontalAlignment(SwingConstants.CENTER);
@@ -278,33 +312,5 @@ public class StudentDashBoard extends JFrame {
 		contentPane.setLayout(null);
 
 		event_listener();
-	}
-
-	public StudentDashBoard(SinhVien sinhVien) {
-		this.sinhVien = sinhVien;
-
-		init();
-
-		// Lấy vị trí hiện tại của con tr�? JFrame
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				draggedAtX = e.getX();
-				draggedAtY = e.getY();
-			}
-		});
-		// Kéo thả Jpanel khi đã có vị trí hiện tại của con JFrame e.getXOnScreen()
-		// e.getYOnScreen() trên màn hình
-		addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				int x = e.getXOnScreen();
-				int y = e.getYOnScreen();
-				// Set location cho JFrame dựa trên vị trí con tr�? chuột đang nằm ở JFrame và
-				// vị
-				// trí của JFrame trên màn hình
-				setLocation(x - draggedAtX, y - draggedAtY);
-			}
-		});
 	}
 }
