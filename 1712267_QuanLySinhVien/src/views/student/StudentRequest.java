@@ -15,6 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import dao.SinhVienDao;
+import entity.DSSV_MON;
+import entity.PhucKhao;
 import entity.SinhVien;
 import views.GenericStuff;
 import views.Login;
@@ -113,11 +116,77 @@ public class StudentRequest extends JFrame {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				SinhVienDao sinhVienDao = new SinhVienDao();
+				for (SinhVien sinhVien : sinhVienDao.findAll()) {
+					for (DSSV_MON dssv_MON : sinhVien.getDssv_MON()) {
+						if (dssv_MON.getPhucKhaos().size() == 0) {
+							continue;
+						} else {
+							System.out.println(dssv_MON.getSinhVien().get_mssv());
+							for (PhucKhao phucKhao : dssv_MON.getPhucKhaos()) {
+								System.out.println(phucKhao.getNoidung());
+							}
+						}
+					}
+				}
+			}
+		});
+		btnNewButton.setBounds(335, 11, 89, 23);
+		contentPane.add(btnNewButton);
+
+		JPanel panel_Lich = new JPanel();
+		panel_Lich.setLayout(null);
+		panel_Lich.setBackground(Color.WHITE);
+		panel_Lich.setBounds(10, 11, 100, 125);
+		contentPane.add(panel_Lich);
+		JLabel lblLchHc = new JLabel("<html>Điều Chỉnh Học Phần</html>", SwingConstants.CENTER);
+		lblLchHc.setForeground(Color.BLACK);
+		lblLchHc.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblLchHc.setBounds(0, 88, 100, 33);
+		panel_Lich.add(lblLchHc);
+		JLabel lblIconlichhoc = new JLabel();
+		lblIconlichhoc.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				RequestClass requestClass = new RequestClass(sinhVien);
+				genericStuff.call_dialog(requestClass);
+			}
+		});
+		lblIconlichhoc.setBounds(10, 11, 80, 80);
+		ImageIcon imgIcon_Schedules = new ImageIcon(Login.class.getResource("/resources/images/Schedule.png"));
+		Image image_Schedules = imgIcon_Schedules.getImage();
+		Image newImage_Schedules = image_Schedules.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		lblIconlichhoc.setIcon(new ImageIcon(newImage_Schedules));
+		panel_Lich.add(lblIconlichhoc);
+		genericStuff.hover(lblIconlichhoc, lblLchHc, panel_Lich, new Color(230, 230, 250), Color.LIGHT_GRAY,
+				Color.BLACK, Color.WHITE);
+
+		JPanel panel_Diem = new JPanel();
+		panel_Diem.setLayout(null);
+		panel_Diem.setBackground(Color.WHITE);
+		panel_Diem.setBounds(160, 11, 100, 125);
+		contentPane.add(panel_Diem);
+		JLabel lblimS = new JLabel("<html>Phúc Khảo Điểm Số</html>", SwingConstants.CENTER);
+		lblimS.setForeground(Color.BLACK);
+		lblimS.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblimS.setBounds(0, 86, 100, 39);
+		panel_Diem.add(lblimS);
+		JLabel lblIcondiem = new JLabel();
+		lblIcondiem.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 
 			}
 		});
-		btnNewButton.setBounds(10, 227, 89, 23);
-		contentPane.add(btnNewButton);
+		lblIcondiem.setBounds(10, 11, 80, 80);
+		ImageIcon imgIcon_Scores = new ImageIcon(Login.class.getResource("/resources/images/Scores.png"));
+		Image image_Scores = imgIcon_Scores.getImage();
+		Image newImage_Scores = image_Scores.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		lblIcondiem.setIcon(new ImageIcon(newImage_Scores));
+		panel_Diem.add(lblIcondiem);
+		genericStuff.hover(lblIcondiem, lblimS, panel_Diem, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
+				Color.LIGHT_GRAY);
+
 	}
 
 	private void init() {

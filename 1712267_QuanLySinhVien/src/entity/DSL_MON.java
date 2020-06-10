@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "danhsachlop_mon")
@@ -84,17 +87,6 @@ public class DSL_MON implements Serializable {
 		this.dchps = dchps;
 	}
 
-	@OneToMany(mappedBy = "dsl_MON")
-	private List<PhucKhao> phucKhaos;
-
-	public List<PhucKhao> getPhucKhaos() {
-		return phucKhaos;
-	}
-
-	public void setPhucKhaos(List<PhucKhao> phucKhaos) {
-		this.phucKhaos = phucKhaos;
-	}
-
 	@Column(name = "malop_mon")
 	private String malop_mon;
 
@@ -131,6 +123,24 @@ public class DSL_MON implements Serializable {
 
 	public void set_phongHoc(String _phongHoc) {
 		this._phongHoc = _phongHoc;
+	}
+
+	@Transient
+	Comparator<DSL_MON> dslmComparator = new Comparator<DSL_MON>() {
+		public int compare(DSL_MON o1, DSL_MON o2) {
+			return o1.getMalop_mon().compareTo(o2.getMalop_mon());
+		}
+	};
+
+	public DSL_MON findByMLM(List<DSL_MON> listSV, DSL_MON dsl_MON) {
+		Collections.sort(listSV, dslmComparator);
+		int i = Collections.binarySearch(listSV, dsl_MON, dslmComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return listSV.get(i);
+		}
 	}
 
 }

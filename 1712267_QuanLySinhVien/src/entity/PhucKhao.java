@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -42,8 +43,21 @@ public class PhucKhao implements Serializable {
 		this.ma_sinhVien = ma_sinhVien;
 	}
 
+	@Column(name = "malop_mon")
+	private String malop_mon;
+
+	public String getMalop_mon() {
+		return malop_mon;
+	}
+
+	public void setMalop_mon(String malop_mon) {
+		this.malop_mon = malop_mon;
+	}
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_sinhvien", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_sinhvien")
+	@JoinColumns({
+			@JoinColumn(name = "ma_sinhvien", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_sinhvien"),
+			@JoinColumn(name = "malop_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "malop_mon") })
 	private DSSV_MON dssv_MON;
 
 	public DSSV_MON getDssv_MON() {
@@ -52,29 +66,6 @@ public class PhucKhao implements Serializable {
 
 	public void setDssv_MON(DSSV_MON dssv_MON) {
 		this.dssv_MON = dssv_MON;
-	}
-
-	@Column(name = "ma_mon")
-	private String ma_mon;
-
-	public String getMa_mon() {
-		return ma_mon;
-	}
-
-	public void setMa_mon(String ma_mon) {
-		this.ma_mon = ma_mon;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ma_mon", insertable = false, updatable = false, nullable = true, referencedColumnName = "ma_mon")
-	private DSL_MON dsl_MON;
-
-	public DSL_MON getDsl_MON() {
-		return dsl_MON;
-	}
-
-	public void setDsl_MON(DSL_MON dsl_MON) {
-		this.dsl_MON = dsl_MON;
 	}
 
 	@Column(name = "noidung_phuckhao")
@@ -103,10 +94,15 @@ public class PhucKhao implements Serializable {
 
 	}
 
-	public PhucKhao(int phuckhao_no, String ma_sinhVien, DSSV_MON dssv_MON, DSL_MON dsl_MON) {
+	public PhucKhao(int phuckhao_no, String ma_sinhVien, String malop_mon, DSSV_MON dssv_MON, String noidung,
+			int trangthai) {
+		super();
 		this.phuckhao_no = phuckhao_no;
 		this.ma_sinhVien = ma_sinhVien;
+		this.malop_mon = malop_mon;
 		this.dssv_MON = dssv_MON;
-		this.dsl_MON = dsl_MON;
+		this.noidung = noidung;
+		this.trangthai = trangthai;
 	}
+
 }
