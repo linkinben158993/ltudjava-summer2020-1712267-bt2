@@ -26,10 +26,12 @@ public class DCHPDao {
 			return session.find(DCHP.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 		return null;
 	}
-	
+
 	public void insert(DCHP dchp) {
 		Session session = sessionFactory.openSession();
 		try {
@@ -53,7 +55,7 @@ public class DCHPDao {
 		}
 		session.close();
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<DCHP> findAll() {
 		Session session = sessionFactory.openSession();

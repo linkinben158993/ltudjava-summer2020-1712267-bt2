@@ -26,6 +26,8 @@ public class GiaoVuDao {
 			return session.find(GiaoVu.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 		return null;
 	}
@@ -52,8 +54,9 @@ public class GiaoVuDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-		session.close();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

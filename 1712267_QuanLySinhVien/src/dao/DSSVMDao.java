@@ -26,6 +26,8 @@ public class DSSVMDao {
 			return session.find(DSSV_MON.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 		return null;
 	}
@@ -43,15 +45,17 @@ public class DSSVMDao {
 	}
 
 	public void remove(int id) {
+		DSSV_MON foundDSSV = findById(id);
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();
-			session.remove(findById(id));
+			session.remove(foundDSSV);
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-		session.close();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -17,8 +17,8 @@ import util.HibernateUtil;
 
 @Transactional(rollbackOn = Exception.class)
 public class QuyenDao {
-	
-	private static final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<Quyen> findAll() {

@@ -10,8 +10,10 @@ import javax.swing.border.EmptyBorder;
 
 import dao.DCHPDao;
 import dao.DSLMDao;
+import dao.DSSVMDao;
 import entity.DCHP;
 import entity.DSL_MON;
+import entity.DSSV_MON;
 import entity.SinhVien;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +31,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class RequestClass extends JDialog {
 
@@ -36,6 +43,14 @@ public class RequestClass extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JLabel lblTenMon;
 	private SinhVien sinhVien;
+
+	public SinhVien getSinhVien() {
+		return sinhVien;
+	}
+
+	public void setSinhVien(SinhVien sinhVien) {
+		this.sinhVien = sinhVien;
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -47,10 +62,9 @@ public class RequestClass extends JDialog {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public RequestClass(SinhVien sinhVien) {
 		this.sinhVien = sinhVien;
-		setBounds(100, 100, 450, 230);
+		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -68,16 +82,16 @@ public class RequestClass extends JDialog {
 		lblMsg.setBounds(80, 0, 280, 40);
 		lblMsg.setOpaque(true);
 		contentPanel.add(lblMsg);
+
+		JSeparator separator = new JSeparator();
+		separator.setBounds(10, 89, 100, 2);
+		contentPanel.add(separator);
 		{
 			JLabel lblReqType = new JLabel("Loại Yêu Cầu:");
 			lblReqType.setFont(new Font("Times New Roman", Font.BOLD, 14));
 			lblReqType.setBounds(10, 102, 100, 40);
 			contentPanel.add(lblReqType);
 		}
-
-		JSeparator separator = new JSeparator();
-		separator.setBounds(10, 89, 100, 2);
-		contentPanel.add(separator);
 
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(10, 141, 100, 2);
@@ -135,25 +149,43 @@ public class RequestClass extends JDialog {
 		comboBoxType.setBounds(120, 113, 130, 20);
 		contentPanel.add(comboBoxType);
 
+		JLabel lblContent = new JLabel("Nội Dung:");
+		lblContent.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblContent.setBounds(10, 153, 100, 40);
+		contentPanel.add(lblContent);
+
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBounds(10, 191, 100, 2);
+		contentPanel.add(separator_2);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBounds(120, 162, 304, 55);
+		contentPanel.add(scrollPane);
+
+		JTextArea textAreaNoiDung = new JTextArea();
+		textAreaNoiDung.setLineWrap(true);
+		textAreaNoiDung.setWrapStyleWord(true);
+		scrollPane.setViewportView(textAreaNoiDung);
+
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("Gửi Yêu Cầu");
+				okButton.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent arg0) {
+						if (arg0.getKeyCode() == 13) {
+							validateAndInsert(comboBoxClass, comboBoxType, dchp, textAreaNoiDung);
+						}
+					}
+				});
 				okButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
-						if(comboBoxClass.getSelectedItem() == null || comboBoxType.getSelectedItem() == null) {
-							JOptionPane.showMessageDialog(null,
-									"Phải chọn lớp đang mở và loại yêu cầu!");
-						}
-						else {
-							dchp.set_masinhVien(sinhVien.get_mssv());
-							dchp.set_malopMon(comboBoxClass.getSelectedItem().toString());
-							DCHPDao dchpDao = new DCHPDao();
-							dchpDao.insert(dchp);
-						}
+						validateAndInsert(comboBoxClass, comboBoxType, dchp, textAreaNoiDung);
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -162,8 +194,64 @@ public class RequestClass extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Hủy");
+				cancelButton.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
+			}
+		}
+	}
+
+	private void validateAndInsert(JComboBox<String> comboBoxClass, JComboBox<String> comboBoxType, DCHP dchp,
+			JTextArea textAreaNoiDung) {
+		if (comboBoxClass.getSelectedItem() == null || comboBoxType.getSelectedItem() == null) {
+			JOptionPane.showMessageDialog(null, "Phải chọn lớp đang mở và loại yêu cầu!");
+		} else {
+			String noiDung = textAreaNoiDung.getText().toString();
+			if (noiDung.length() > 200) {
+				JOptionPane.showMessageDialog(null, "Nội dung chỉ được 200 kí tự!");
+			} else {
+				if (dchp.get_mayeuCau() == 1) {
+					dchp.set_masinhVien(sinhVien.get_mssv());
+					dchp.set_malopMon(comboBoxClass.getSelectedItem().toString());
+					dchp.set_noiDung(noiDung);
+					DCHPDao dchpDao = new DCHPDao();
+					List<DSSV_MON> dssv_MONs = new DSSVMDao().findAll();
+					DSSV_MON svLop = new DSSV_MON();
+					svLop.set_mssv(sinhVien.get_mssv());
+					svLop.set_malopMon(comboBoxClass.getSelectedItem().toString());
+					DSSV_MON foundSV = new DSSV_MON().findByMSSV_LOPMON(dssv_MONs, svLop);
+					if (foundSV != null) {
+						JOptionPane.showMessageDialog(null, dchp.get_masinhVien() + " đã có trong lớp này!");
+					} else {
+						JOptionPane.showMessageDialog(null, dchp.get_masinhVien() + " được đăng ký lớp này!");
+						dchpDao.insert(dchp);
+						JOptionPane.showMessageDialog(null, "Gửi yêu cầu thành công!");
+						dispose();
+					}
+				} else if (dchp.get_mayeuCau() == 2) {
+					dchp.set_masinhVien(sinhVien.get_mssv());
+					dchp.set_malopMon(comboBoxClass.getSelectedItem().toString());
+					dchp.set_noiDung(noiDung);
+					DCHPDao dchpDao = new DCHPDao();
+					List<DSSV_MON> dssv_MONs = new DSSVMDao().findAll();
+					DSSV_MON svLop = new DSSV_MON();
+					svLop.set_mssv(sinhVien.get_mssv());
+					svLop.set_malopMon(comboBoxClass.getSelectedItem().toString());
+					DSSV_MON foundSV = new DSSV_MON().findByMSSV_LOPMON(dssv_MONs, svLop);
+					if (foundSV == null) {
+						JOptionPane.showMessageDialog(null, dchp.get_masinhVien() + " không có trong lớp này!");
+					} else {
+						JOptionPane.showMessageDialog(null, dchp.get_masinhVien() + " hủy lớp!");
+						dchpDao.insert(dchp);
+						JOptionPane.showMessageDialog(null, "Gửi yêu cầu thành công!");
+						dispose();
+					}
+				}
 			}
 		}
 	}

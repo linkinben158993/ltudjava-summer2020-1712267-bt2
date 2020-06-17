@@ -314,7 +314,7 @@ public class Login extends JFrame {
 					} else {
 						System.out.println("Mật khẩu sai!");
 						alertDialog = new AlertDialog(AlertConstants.WRONG_FIELD_WARNINGS,
-								AlertConstants.WRONG_FIELD_WARNINGS);
+								AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
 						genericStuff.call_frame(alertDialog);
 					}
 				} else {
@@ -329,6 +329,7 @@ public class Login extends JFrame {
 
 					} else {
 						System.out.println("Mật khẩu sai!");
+						dispose();
 						alertDialog = new AlertDialog(AlertConstants.WRONG_FIELD_WARNINGS,
 								AlertConstants.NOTFOUND_BLANK_WRONG_FIELD_PATH);
 						genericStuff.call_frame(alertDialog);

@@ -300,7 +300,7 @@ public class LecturerSchedule extends JFrame {
 	}
 
 	private DefaultTableModel draw_DCHP(List<DCHP> dchps) {
-		String[] columns = { "STT", "Mã Sinh Viên", "Mã Lớp", "Lớp Môn", "Yêu Cầu" };
+		String[] columns = { "STT", "Mã Sinh Viên", "Lớp Môn", "Yêu Cầu", "Nội Dung" };
 		tableModel_DCHP = new DefaultTableModel(columns, 0);
 		int i = 0;
 		for (DCHP item : dchps) {

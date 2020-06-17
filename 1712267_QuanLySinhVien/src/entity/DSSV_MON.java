@@ -120,11 +120,15 @@ public class DSSV_MON implements Serializable {
 	@Transient
 	Comparator<DSSV_MON> dssvMonComparator = new Comparator<DSSV_MON>() {
 		public int compare(DSSV_MON o1, DSSV_MON o2) {
-			return o1.get_mssv().compareTo(o2.get_mssv());
+			int c = o1.get_mssv().compareTo(o2.get_mssv());
+			if (c == 0) {
+				c = o1.get_malopMon().compareTo(o2.get_malopMon());
+			}
+			return c;
 		}
 	};
 
-	public DSSV_MON findByMSSV(List<DSSV_MON> dssv_MONs, DSSV_MON dssv_MON) {
+	public DSSV_MON findByMSSV_LOPMON(List<DSSV_MON> dssv_MONs, DSSV_MON dssv_MON) {
 		Collections.sort(dssv_MONs, dssvMonComparator);
 		int i = Collections.binarySearch(dssv_MONs, dssv_MON, dssvMonComparator);
 
@@ -148,5 +152,4 @@ public class DSSV_MON implements Serializable {
 			return dssv_MONs2;
 		}
 	}
-
 }

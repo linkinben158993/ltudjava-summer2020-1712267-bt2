@@ -152,7 +152,8 @@ public class AlertDialog extends JFrame {
 				}
 			});
 		}
-		if (message.equals(AlertConstants.BLANK_FIELD_WARNING) || message.equals(AlertConstants.WRONG_FIELD_WARNINGS)) {
+		if (message.equals(AlertConstants.BLANK_FIELD_WARNING) || message.equals(AlertConstants.WRONG_FIELD_WARNINGS)
+				|| message.equals(AlertConstants.NOTFOUND_WARNINGS)) {
 			Button button_relogin = new Button("Đăng Nhập Lại");
 			button_relogin.addMouseListener(new MouseAdapter() {
 				@Override

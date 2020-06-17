@@ -87,7 +87,7 @@ public class StudentRequest extends JFrame {
 		JPanel panel_QuayLai = new JPanel();
 		panel_QuayLai.setLayout(null);
 		panel_QuayLai.setBackground(Color.WHITE);
-		panel_QuayLai.setBounds(345, 162, 100, 110);
+		panel_QuayLai.setBounds(230, 26, 100, 110);
 		contentPane.add(panel_QuayLai);
 		JLabel lblBack = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblBack.setForeground(Color.BLACK);
@@ -109,8 +109,8 @@ public class StudentRequest extends JFrame {
 				genericStuff.call_frame(studentDashBoard);
 			}
 		});
-		genericStuff.hover(lblIconBack, lblBack, panel_QuayLai, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
-				Color.LIGHT_GRAY);
+		genericStuff.hover(lblIconBack, lblBack, panel_QuayLai, new Color(230, 230, 250), Color.LIGHT_GRAY, Color.BLACK,
+				Color.WHITE);
 
 		JButton btnNewButton = new JButton("New button");
 		btnNewButton.addMouseListener(new MouseAdapter() {
@@ -131,7 +131,7 @@ public class StudentRequest extends JFrame {
 				}
 			}
 		});
-		btnNewButton.setBounds(335, 11, 89, 23);
+		btnNewButton.setBounds(340, 113, 89, 23);
 		contentPane.add(btnNewButton);
 
 		JPanel panel_Lich = new JPanel();
@@ -164,7 +164,7 @@ public class StudentRequest extends JFrame {
 		JPanel panel_Diem = new JPanel();
 		panel_Diem.setLayout(null);
 		panel_Diem.setBackground(Color.WHITE);
-		panel_Diem.setBounds(160, 11, 100, 125);
+		panel_Diem.setBounds(120, 11, 100, 125);
 		contentPane.add(panel_Diem);
 		JLabel lblimS = new JLabel("<html>Phúc Khảo Điểm Số</html>", SwingConstants.CENTER);
 		lblimS.setForeground(Color.BLACK);
@@ -175,7 +175,8 @@ public class StudentRequest extends JFrame {
 		lblIcondiem.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				RequestGrades requestGrades = new RequestGrades(sinhVien);
+				genericStuff.call_dialog(requestGrades);
 			}
 		});
 		lblIcondiem.setBounds(10, 11, 80, 80);
@@ -184,14 +185,14 @@ public class StudentRequest extends JFrame {
 		Image newImage_Scores = image_Scores.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
 		lblIcondiem.setIcon(new ImageIcon(newImage_Scores));
 		panel_Diem.add(lblIcondiem);
-		genericStuff.hover(lblIcondiem, lblimS, panel_Diem, new Color(230, 230, 250), Color.DARK_GRAY, Color.BLACK,
-				Color.LIGHT_GRAY);
+		genericStuff.hover(lblIcondiem, lblimS, panel_Diem, new Color(230, 230, 250), Color.LIGHT_GRAY, Color.BLACK,
+				Color.WHITE);
 
 	}
 
 	private void init() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 420, 146);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);

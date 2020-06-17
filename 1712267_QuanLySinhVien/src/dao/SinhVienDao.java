@@ -26,6 +26,8 @@ public class SinhVienDao {
 			return session.find(SinhVien.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 		return null;
 	}
@@ -38,8 +40,9 @@ public class SinhVienDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-		session.close();
 	}
 
 	public int updatePassword(String password, int id) {

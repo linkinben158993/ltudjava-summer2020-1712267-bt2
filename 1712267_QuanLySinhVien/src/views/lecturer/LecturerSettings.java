@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import entity.GiaoVu;
@@ -26,6 +27,16 @@ public class LecturerSettings extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private GiaoVu giaoVu;
+
+	private JFrame curFrame;
+
+	public JFrame getCurFrame() {
+		return curFrame;
+	}
+
+	public void setCurFrame(JFrame curFrame) {
+		this.curFrame = curFrame;
+	}
 
 	public GiaoVu getGiaoVu() {
 		return giaoVu;
@@ -81,7 +92,7 @@ public class LecturerSettings extends JFrame {
 	}
 
 	private void event_listener() {
-		contentPane.setLayout(null);
+		this.curFrame = (JFrame) SwingUtilities.getWindowAncestor(contentPane);
 
 		JPanel panel_Profile = new JPanel();
 		panel_Profile.setLayout(null);
@@ -213,8 +224,7 @@ public class LecturerSettings extends JFrame {
 		lblIconChangePw.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				dispose();
-				ChangePassword changePassword = new ChangePassword(giaoVu);
+				ChangePassword changePassword = new ChangePassword(giaoVu, curFrame);
 				genericStuff.call_dialog(changePassword);
 			}
 		});
@@ -234,6 +244,7 @@ public class LecturerSettings extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
 
 		JLabel lblLtudJava = new JLabel("2020 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
 		lblLtudJava.setHorizontalAlignment(SwingConstants.CENTER);

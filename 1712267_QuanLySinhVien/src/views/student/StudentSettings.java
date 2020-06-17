@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
@@ -26,12 +27,22 @@ public class StudentSettings extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JFrame curFrame;
+	
 
 	public int draggedAtX;
 	public int draggedAtY;
 
 	private SinhVien sinhVien;
 	private GenericStuff genericStuff = new GenericStuff();
+
+	public JFrame getCurFrame() {
+		return curFrame;
+	}
+
+	public void setCurFrame(JFrame curFrame) {
+		this.curFrame = curFrame;
+	}
 
 	public SinhVien getSinhVien() {
 		return sinhVien;
@@ -83,7 +94,8 @@ public class StudentSettings extends JFrame {
 	}
 
 	private void event_listener() {
-
+		this.curFrame = (JFrame) SwingUtilities.getWindowAncestor(contentPane);
+		
 		JPanel panel_Profile = new JPanel();
 		panel_Profile.setLayout(null);
 		panel_Profile.setBackground(Color.WHITE);
@@ -186,8 +198,7 @@ public class StudentSettings extends JFrame {
 		lblIconChangePw.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				dispose();
-				ChangePassword changePassword = new ChangePassword(sinhVien);
+				ChangePassword changePassword = new ChangePassword(sinhVien, curFrame);
 				genericStuff.call_dialog(changePassword);
 			}
 		});

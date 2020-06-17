@@ -28,8 +28,9 @@ public class DSLMDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-		session.close();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

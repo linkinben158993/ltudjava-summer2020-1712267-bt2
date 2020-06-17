@@ -13,7 +13,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import entity.DSL_MON;
 import entity.Mon;
 import util.HibernateUtil;
 
@@ -29,8 +28,9 @@ public class MonDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
-		session.close();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

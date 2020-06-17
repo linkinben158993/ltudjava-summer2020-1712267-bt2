@@ -26,6 +26,8 @@ public class PhucKhaoDao {
 			return session.find(PhucKhao.class, id);
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
 		}
 		return null;
 	}
@@ -38,11 +40,13 @@ public class PhucKhaoDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
+
 		}
-		session.close();
 	}
 
-	public int updatePassword(String password, int id) {
+	public int updateStatus(String password, int id) {
 		Session session = sessionFactory.openSession();
 		try {
 			Transaction trans = session.beginTransaction();

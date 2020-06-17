@@ -166,7 +166,7 @@ public class LecturerGrades extends JFrame {
 		JPanel panel_QuayLai = new JPanel();
 		panel_QuayLai.setLayout(null);
 		panel_QuayLai.setBackground(Color.WHITE);
-		panel_QuayLai.setBounds(10, 412, 100, 110);
+		panel_QuayLai.setBounds(800, 490, 100, 110);
 		contentPane.add(panel_QuayLai);
 		JLabel lblQuayLi = new JLabel("Quay Lại", SwingConstants.CENTER);
 		lblQuayLi.setForeground(Color.BLACK);
@@ -313,14 +313,41 @@ public class LecturerGrades extends JFrame {
 		scrollPane_PhanTram.setViewportView(table_PhanTram);
 		resizeTablePhanTram(table_PhanTram, centerRenderer);
 		JSeparator separator_Cred = new JSeparator();
-		separator_Cred.setBounds(291, 547, 330, 2);
+		separator_Cred.setBounds(291, 580, 330, 2);
 		contentPane.add(separator_Cred);
 
 		JLabel lblLtudJava = new JLabel("2020 LTUD Java - 1712267 Nguyễn Hoàng Thiên Ân");
 		lblLtudJava.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLtudJava.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblLtudJava.setBounds(291, 547, 330, 14);
+		lblLtudJava.setBounds(291, 580, 330, 14);
 		contentPane.add(lblLtudJava);
+
+		JPanel panelPhucKhao = new JPanel();
+		panelPhucKhao.setLayout(null);
+		panelPhucKhao.setBackground(Color.WHITE);
+		panelPhucKhao.setBounds(10, 412, 100, 110);
+		contentPane.add(panelPhucKhao);
+		JLabel lblPhcKho = new JLabel("Phúc Khảo", SwingConstants.CENTER);
+		lblPhcKho.setForeground(Color.BLACK);
+		lblPhcKho.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		lblPhcKho.setBounds(0, 92, 100, 14);
+		panelPhucKhao.add(lblPhcKho);
+		JLabel lblIconPhucKhao = new JLabel();
+		lblIconPhucKhao.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+		});
+		lblIconPhucKhao.setBounds(10, 11, 80, 80);
+		ImageIcon imgIcon_PhucKhao = new ImageIcon(
+				LecturerSchedule.class.getResource("/resources/images/Messages.png"));
+		Image image_PhucKhao = imgIcon_PhucKhao.getImage();
+		Image newImage_PhucKhao = image_PhucKhao.getScaledInstance(70, 70, java.awt.Image.SCALE_SMOOTH);
+		lblIconPhucKhao.setIcon(new ImageIcon(newImage_PhucKhao));
+		genericStuff.hover(lblIconPhucKhao, lblPhcKho, panelPhucKhao, new Color(230, 230, 250), Color.LIGHT_GRAY,
+				Color.BLACK, Color.WHITE);
+		panelPhucKhao.add(lblIconPhucKhao);
 
 	}
 
@@ -481,5 +508,4 @@ public class LecturerGrades extends JFrame {
 		jTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
 		jTable.getColumnModel().getColumn(1).setPreferredWidth(100);
 	}
-
 }

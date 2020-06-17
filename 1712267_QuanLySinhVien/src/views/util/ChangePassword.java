@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -30,6 +31,17 @@ public class ChangePassword extends JDialog {
 	private static final long serialVersionUID = 1L;
 
 	private GenericStuff genericStuff = new GenericStuff();
+
+	private JFrame prevFrame;
+
+	public JFrame getPrevFrame() {
+		return prevFrame;
+	}
+
+	public void setPrevFrame(JFrame prevFrame) {
+		this.prevFrame = prevFrame;
+	}
+
 	private SinhVien sinhVien;
 
 	public SinhVien getSinhVien() {
@@ -57,7 +69,7 @@ public class ChangePassword extends JDialog {
 
 	public static void main(String[] args) {
 		try {
-			ChangePassword dialog = new ChangePassword(new GiaoVu());
+			ChangePassword dialog = new ChangePassword(new GiaoVu(), new JFrame());
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -65,8 +77,9 @@ public class ChangePassword extends JDialog {
 		}
 	}
 
-	public ChangePassword(GiaoVu giaoVu) {
+	public ChangePassword(GiaoVu giaoVu, JFrame preVFrame) {
 		this.giaoVu = giaoVu;
+		this.prevFrame = preVFrame;
 		setBounds(100, 100, 350, 200);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -128,6 +141,7 @@ public class ChangePassword extends JDialog {
 										JOptionPane.showMessageDialog(null,
 												"Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại!");
 										dispose();
+										preVFrame.dispose();
 										Login login = new Login();
 										genericStuff.call_frame(login);
 									}
@@ -159,7 +173,7 @@ public class ChangePassword extends JDialog {
 	/**
 	 * @wbp.parser.constructor
 	 */
-	public ChangePassword(SinhVien sinhVien) {
+	public ChangePassword(SinhVien sinhVien, JFrame preVFrame) {
 		this.sinhVien = sinhVien;
 		setBounds(100, 100, 350, 200);
 		getContentPane().setLayout(new BorderLayout());
