@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -90,19 +91,64 @@ public class PhucKhao implements Serializable {
 		this.trangthai = trangthai;
 	}
 
-	public PhucKhao() {
-
+	public int getMa_dot() {
+		return ma_dot;
 	}
 
-	public PhucKhao(int phuckhao_no, String ma_sinhVien, String malop_mon, DSSV_MON dssv_MON, String noidung,
-			int trangthai) {
-		super();
-		this.phuckhao_no = phuckhao_no;
-		this.ma_sinhVien = ma_sinhVien;
-		this.malop_mon = malop_mon;
-		this.dssv_MON = dssv_MON;
-		this.noidung = noidung;
-		this.trangthai = trangthai;
+	public void setMa_dot(int ma_dot) {
+		this.ma_dot = ma_dot;
+	}
+
+	@Column(name = "cot_diem")
+	private int cot_diem;
+
+	public int getCot_diem() {
+		return cot_diem;
+	}
+
+	public void setCot_diem(int cot_diem) {
+		this.cot_diem = cot_diem;
+	}
+
+	@Column(name = "diem_mongmuon")
+	private float diem_mongmuon;
+
+	public float getDiem_mongmuon() {
+		return diem_mongmuon;
+	}
+
+	public void setDiem_mongmuon(float diem_mongmuon) {
+		this.diem_mongmuon = diem_mongmuon;
+	}
+
+	@Column(name = "ma_dot")
+	private int ma_dot;
+
+	@ManyToOne()
+	@JoinColumn(name = "ma_dot", insertable = false, updatable = false, nullable = true)
+	private Dot dot_phuckhao;
+
+	public Dot getDot_phuckhao() {
+		return dot_phuckhao;
+	}
+
+	public void setDot_phuckhao(Dot dot_phuckhao) {
+		this.dot_phuckhao = dot_phuckhao;
+	}
+
+	@Column(name = "ngay_nop")
+	private Timestamp ngay_nop;
+
+	public Timestamp getNgay_nop() {
+		return ngay_nop;
+	}
+
+	public void setNgay_nop(Timestamp ngay_nop) {
+		this.ngay_nop = ngay_nop;
+	}
+
+	public PhucKhao() {
+
 	}
 
 }

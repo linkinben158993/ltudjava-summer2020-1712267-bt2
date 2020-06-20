@@ -11,6 +11,7 @@ import org.hibernate.service.ServiceRegistry;
 
 import entity.DSSV_MON;
 import entity.Diem;
+import entity.Dot;
 import entity.DCHP;
 import entity.DSL_MON;
 import entity.GiaoVu;
@@ -43,6 +44,7 @@ public class HibernateUtil {
 			configuration.addAnnotatedClass(DCHP.class);
 			configuration.addAnnotatedClass(Diem.class);
 			configuration.addAnnotatedClass(PhucKhao.class);
+			configuration.addAnnotatedClass(Dot.class);
 
 			// Chỉ show lỗi không show debug log của thư viện log4j
 			logger.getRootLogger().setLevel(Level.ERROR);

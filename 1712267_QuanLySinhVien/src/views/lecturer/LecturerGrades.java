@@ -14,9 +14,11 @@ import javax.swing.table.DefaultTableModel;
 
 import dao.DSLMDao;
 import dao.DiemDao;
+import dao.PhucKhaoDao;
 import entity.DSL_MON;
 import entity.Diem;
 import entity.GiaoVu;
+import entity.PhucKhao;
 import util.FileParser;
 import views.GenericStuff;
 import views.Login;
@@ -336,7 +338,8 @@ public class LecturerGrades extends JFrame {
 		lblIconPhucKhao.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+				LecturerGradesReview lecturerGradesReview = new LecturerGradesReview(giaoVu);
+				genericStuff.call_dialog(lecturerGradesReview);
 			}
 		});
 		lblIconPhucKhao.setBounds(10, 11, 80, 80);
@@ -348,7 +351,20 @@ public class LecturerGrades extends JFrame {
 		genericStuff.hover(lblIconPhucKhao, lblPhcKho, panelPhucKhao, new Color(230, 230, 250), Color.LIGHT_GRAY,
 				Color.BLACK, Color.WHITE);
 		panelPhucKhao.add(lblIconPhucKhao);
+		JLabel lblNoti = new JLabel();
+		lblNoti.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNoti.setForeground(Color.WHITE);
+		List<PhucKhao> phucKhaos = new PhucKhaoDao().findAll();
+		lblNoti.setBounds(75, 0, 25, 25);
 
+		if (phucKhaos.size() > 0) {
+			lblNoti.setOpaque(true);
+			lblNoti.setBackground(Color.RED);
+			lblNoti.setText(String.valueOf(phucKhaos.size()));
+		} else {
+			lblNoti.setText(String.valueOf(0));
+		}
+		panelPhucKhao.add(lblNoti);
 	}
 
 	private void init() {
@@ -400,7 +416,6 @@ public class LecturerGrades extends JFrame {
 
 			for (Diem diem : diems) {
 				i++;
-				System.out.println(diem.getMaLop_mon());
 				if (diem.get_tongDiem() < 4.75) {
 					String[] data = { String.valueOf(i), diem.get_mssv(), diem.get_tenSinhVien(),
 							diem.getSinhVien().getMa_lop(), diem.getMaLop_mon(), String.valueOf(diem.get_tongDiem()),

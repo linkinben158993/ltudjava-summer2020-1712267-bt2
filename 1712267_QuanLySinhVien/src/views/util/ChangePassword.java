@@ -175,6 +175,8 @@ public class ChangePassword extends JDialog {
 	 */
 	public ChangePassword(SinhVien sinhVien, JFrame preVFrame) {
 		this.sinhVien = sinhVien;
+		this.prevFrame = preVFrame;
+
 		setBounds(100, 100, 350, 200);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -236,6 +238,7 @@ public class ChangePassword extends JDialog {
 										JOptionPane.showMessageDialog(null,
 												"Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại!");
 										dispose();
+										preVFrame.dispose();
 										Login login = new Login();
 										genericStuff.call_frame(login);
 									}

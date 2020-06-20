@@ -32,12 +32,14 @@ public class GenericStuff extends JFrame {
 
 	}
 
+	// Gọi show JFrame
 	public void call_frame(JFrame frame) {
 		frame.setLocationRelativeTo(null);
 		frame.setUndecorated(true);
 		frame.setVisible(true);
 	}
 
+	// Gọi show JDialog
 	public void call_dialog(JDialog jDialog) {
 		jDialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		jDialog.setLocationRelativeTo(null);
@@ -50,6 +52,7 @@ public class GenericStuff extends JFrame {
 		});
 	}
 
+	// Gọi chung nếu muốn sử dụng hover cho nút custom bằng panel
 	public void hover(JLabel label, JLabel innerlabel, JPanel jPanel, Color colorHoverInner, Color colorHoverPanel,
 			Color colorAfterInner, Color colorAfterPanel) {
 		label.addMouseListener(new MouseListener() {
@@ -83,6 +86,7 @@ public class GenericStuff extends JFrame {
 		});
 	}
 
+	// Gọi chung nếu muốn tạo hộp thoại confirm.
 	@SuppressWarnings("static-access")
 	public int confirmDialog(String message, String title, String yes_opt, String no_opt, String default_opt) {
 		JOptionPane confirm = new JOptionPane();

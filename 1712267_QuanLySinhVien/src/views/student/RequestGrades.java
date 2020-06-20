@@ -8,10 +8,17 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import dao.DotDao;
+import dao.PhucKhaoDao;
 import entity.DSL_MON;
 import entity.DSSV_MON;
+import entity.Diem;
+import entity.Dot;
+import entity.PhucKhao;
 import entity.SinhVien;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -25,15 +32,23 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
 
 public class RequestGrades extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtDiemMongMuon;
+
+	private JComboBox<String> comboBoxLopMon;
 	private JTextField txtLopMon;
+
+	private JComboBox<String> comboBoxCotDiem;
 	private JTextField txtCotDiem;
-	private JTextField textField_2;
+	private JTextField txtMo;
+	private JTextField txtDong;
 
 	public static void main(String[] args) {
 		try {
@@ -76,7 +91,7 @@ public class RequestGrades extends JDialog {
 				options.put(dssv_MON.getDsl_MON().get_danhsachlopNo(), dssv_MON.getDsl_MON());
 				dsl_MONs.add(dssv_MON.getDsl_MON());
 			}
-			JComboBox<String> comboBoxLopMon = new JComboBox<String>();
+			comboBoxLopMon = new JComboBox<String>();
 			for (Integer id : options.keySet()) {
 				comboBoxLopMon.addItem(options.get(id).getMalop_mon());
 			}
@@ -85,6 +100,7 @@ public class RequestGrades extends JDialog {
 				public void itemStateChanged(ItemEvent arg0) {
 					txtLopMon = new JTextField();
 					txtLopMon.setColumns(10);
+					txtLopMon.setEditable(false);
 					txtLopMon.setBounds(310, 62, 164, 20);
 					contentPanel.add(txtLopMon);
 
@@ -112,11 +128,45 @@ public class RequestGrades extends JDialog {
 			contentPanel.add(lblCotDiem);
 		}
 		{
-			JComboBox<String> comboBoxCotDiem = new JComboBox<String>();
+			comboBoxCotDiem = new JComboBox<String>();
 			comboBoxCotDiem.setMaximumRowCount(3);
 			comboBoxCotDiem.setBounds(170, 113, 130, 20);
+			comboBoxCotDiem.addItem("Cột 1");
+			comboBoxCotDiem.addItem("Cột 2");
+			comboBoxCotDiem.addItem("Cột 3");
+			comboBoxCotDiem.setSelectedItem(null);
+			comboBoxCotDiem.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					txtCotDiem = new JTextField();
+					txtCotDiem.setEditable(false);
+					txtCotDiem.setColumns(10);
+					txtCotDiem.setBounds(310, 113, 164, 20);
+					if (comboBoxLopMon.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Phải chọn lớp!");
+						txtCotDiem.setText("Chọn lớp để xem điểm!");
+					} else {
+						for (Diem diem : sinhVien.getDiems()) {
+							if (diem.getMaLop_mon().equals(comboBoxLopMon.getSelectedItem().toString())
+									&& comboBoxCotDiem.getSelectedItem().toString().split(" ")[1].equals("1")) {
+								txtCotDiem.setText(String.valueOf(diem.get_gk()));
+							} else if (diem.getMaLop_mon().equals(comboBoxLopMon.getSelectedItem().toString())
+									&& comboBoxCotDiem.getSelectedItem().toString().split(" ")[1].equals("2")) {
+								txtCotDiem.setText(String.valueOf(diem.get_ck()));
+							} else if (diem.getMaLop_mon().equals(comboBoxLopMon.getSelectedItem().toString())
+									&& comboBoxCotDiem.getSelectedItem().toString().split(" ")[1].equals("3")) {
+								txtCotDiem.setText(String.valueOf(diem.get_khac()));
+							} else {
+								txtCotDiem.setText("Chưa có điểm môn này!");
+							}
+						}
+					}
+					contentPanel.add(txtCotDiem);
+				}
+			});
 			contentPanel.add(comboBoxCotDiem);
 		}
+
 		{
 			JLabel lblDiemMongMuon = new JLabel("Điểm mong muốn:");
 			lblDiemMongMuon.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -138,9 +188,44 @@ public class RequestGrades extends JDialog {
 		}
 
 		JComboBox<String> comboBoxDot = new JComboBox<String>();
+		DotDao dotDao = new DotDao();
+		List<Dot> dots = dotDao.findAll();
+		for (Dot dot : dots) {
+			comboBoxDot.addItem("Đợt " + dot.getMa_dot());
+		}
+		comboBoxDot.setSelectedItem(null);
+		comboBoxDot.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				Dot dot = new Dot();
+				dot.setMa_dot(Integer.parseInt(comboBoxDot.getSelectedItem().toString().split(" ")[1]));
+
+				Dot foundDot = new Dot().findByMaDot(dots, dot);
+
+				txtMo = new JTextField();
+				txtMo.setColumns(10);
+				txtMo.setEditable(false);
+				txtMo.setBounds(310, 204, 164, 20);
+				contentPanel.add(txtMo);
+
+				txtDong = new JTextField();
+				txtDong.setColumns(10);
+				txtDong.setEditable(false);
+				txtDong.setBounds(310, 235, 164, 20);
+				contentPanel.add(txtDong);
+
+				if (foundDot == null) {
+					txtMo.setText("Không tồn tại!");
+				} else {
+					txtMo.setText("Từ:  " + foundDot.getNgay_mo().toLocalDateTime().toString());
+					txtDong.setText("Đến:  " + foundDot.getNgay_dong().toLocalDateTime().toString());
+				}
+
+			}
+		});
 		comboBoxDot.setMaximumRowCount(3);
 		comboBoxDot.setBounds(170, 215, 130, 20);
 		contentPanel.add(comboBoxDot);
+
 		{
 			JLabel lblNiDung = new JLabel("Nội dung:");
 			lblNiDung.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -154,29 +239,63 @@ public class RequestGrades extends JDialog {
 		txtNoiDung.setLineWrap(true);
 		txtNoiDung.setBounds(170, 264, 254, 100);
 		contentPanel.add(txtNoiDung);
-
-		txtCotDiem = new JTextField();
-		txtCotDiem.setColumns(10);
-		txtCotDiem.setBounds(310, 113, 164, 20);
-		contentPanel.add(txtCotDiem);
-		{
-			textField_2 = new JTextField();
-			textField_2.setColumns(10);
-			textField_2.setBounds(310, 215, 164, 20);
-			contentPanel.add(textField_2);
-		}
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("Gửi Yêu Cầu");
+				okButton.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if (comboBoxLopMon.getSelectedItem() == null || comboBoxCotDiem.getSelectedItem() == null
+								|| comboBoxDot.getSelectedItem() == null || txtNoiDung.getText().isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Phải chọn và nhập đầy đủ trường!");
+						} else {
+							PhucKhaoDao phucKhaoDao = new PhucKhaoDao();
+							PhucKhao phucKhao = new PhucKhao();
+							phucKhao.setMalop_mon(comboBoxLopMon.getSelectedItem().toString());
+							phucKhao.setCot_diem(
+									Integer.parseInt(comboBoxCotDiem.getSelectedItem().toString().split(" ")[1]));
+
+							String match = "^(10|\\d)(\\.\\d{1,2})?$";
+							boolean pass = txtDiemMongMuon.getText().matches(match);
+
+							if (pass) {
+								System.out.println("Đúng định dạng!");
+								Timestamp now = new Timestamp(System.currentTimeMillis());
+								phucKhao.setNgay_nop(now);
+								phucKhao.setMa_dot(
+										Integer.parseInt(comboBoxDot.getSelectedItem().toString().split(" ")[1]));
+								phucKhao.setMa_sinhVien(sinhVien.get_mssv());
+								phucKhao.setDiem_mongmuon(Float.parseFloat(txtDiemMongMuon.getText()));
+								phucKhao.setNoidung(txtNoiDung.getText());
+								int success = phucKhaoDao.insert(phucKhao);
+								if (success < 0) {
+									JOptionPane.showMessageDialog(null, "Gửi yêu cầu phúc khảo thất bại!");
+									dispose();
+								} else {
+									JOptionPane.showMessageDialog(null, "Gửi yêu cầu phúc khảo thành công!");
+									dispose();
+								}
+							} else {
+								JOptionPane.showMessageDialog(null, "Vui lòng nhập điểm lại!");
+							}
+						}
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Hủy");
+				cancelButton.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
