@@ -47,6 +47,21 @@ public class PhucKhaoDao {
 		}
 	}
 
+	public int updateStatusToDisapproved(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			PhucKhao newPhucKhao = (PhucKhao) session.get(PhucKhao.class, id);
+			// Update tình trạng ở đây
+			newPhucKhao.setTrangthai(-1);
+			trans.commit();
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
 	public int updateStatusToSeen(int id) {
 		Session session = sessionFactory.openSession();
 		try {
@@ -54,6 +69,21 @@ public class PhucKhaoDao {
 			PhucKhao newPhucKhao = (PhucKhao) session.get(PhucKhao.class, id);
 			// Update tình trạng ở đây
 			newPhucKhao.setTrangthai(1);
+			trans.commit();
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public int updateStatusToApproved(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			PhucKhao newPhucKhao = (PhucKhao) session.get(PhucKhao.class, id);
+			// Update tình trạng ở đây
+			newPhucKhao.setTrangthai(2);
 			trans.commit();
 			return 0;
 		} catch (Exception e) {

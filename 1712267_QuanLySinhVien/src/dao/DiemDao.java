@@ -20,6 +20,18 @@ import util.HibernateUtil;
 public class DiemDao {
 	protected SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
+	public Diem findById(int id) {
+		Session session = sessionFactory.openSession();
+		try {
+			return session.find(Diem.class, id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return null;
+	}
+
 	public void insert(Diem diem) {
 		Session session = sessionFactory.openSession();
 		try {
@@ -28,6 +40,38 @@ public class DiemDao {
 			trans.commit();
 		} catch (HibernateException e) {
 			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
+
+	public boolean update(int id, int cot, float cotDiemMoi) {
+		Session session = sessionFactory.openSession();
+		try {
+			Transaction trans = session.beginTransaction();
+			Diem newDiem = (Diem) session.get(Diem.class, id);
+			System.out.println(newDiem.get_tenSinhVien());
+			System.out.println(cot);
+			switch (cot) {
+			case 1:
+				newDiem.set_gk(cotDiemMoi);
+				trans.commit();
+				break;
+			case 2:
+				newDiem.set_ck(cotDiemMoi);
+				trans.commit();
+				break;
+			case 3:
+				newDiem.set_khac(cotDiemMoi);
+				trans.commit();
+				break;
+			default:
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		} finally {
 			session.close();
 		}

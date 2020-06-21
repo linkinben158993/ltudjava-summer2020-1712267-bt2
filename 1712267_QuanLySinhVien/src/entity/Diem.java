@@ -2,6 +2,8 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "diem")
@@ -169,5 +172,27 @@ public class Diem implements Serializable {
 			}
 		}
 		return diems2;
+	}
+
+	@Transient
+	Comparator<Diem> diemComparator = new Comparator<Diem>() {
+		public int compare(Diem o1, Diem o2) {
+			int c = o1.get_mssv().compareTo(o2.get_mssv());
+			if (c == 0) {
+				c = o1.getMaLop_mon().compareTo(o2.getMaLop_mon());
+			}
+			return c;
+		}
+	};
+
+	public Diem findByMSSV_LopMon(List<Diem> diems, Diem diem) {
+		Collections.sort(diems, diemComparator);
+		int i = Collections.binarySearch(diems, diem, diemComparator);
+
+		if (i < 0) {
+			return null;
+		} else {
+			return diems.get(i);
+		}
 	}
 }

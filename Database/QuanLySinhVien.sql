@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS PHUC_KHAO(
     
 	NOIDUNG_PHUCKHAO TEXT,
 	NGAY_NOP TIMESTAMP NOT NULL,
-    TRANG_THAI INT,
+    TRANG_THAI INT, -- -1 không duyệt, 0 chưa xem, 1 đã xem, 2 duyệt
 
 	MA_DOT INT,
     
@@ -174,8 +174,9 @@ CREATE TABLE IF NOT EXISTS PHUC_KHAO(
     CONSTRAINT FK_PHUCKHAO_DOT FOREIGN KEY (MA_DOT)
     REFERENCES DOT(MA_DOT),
     
-    -- Sinh viên có thể gửi nhiều yêu cầu
-    CONSTRAINT U_PHUCKHAO UNIQUE (PHUCKHAO_NO, MA_SINHVIEN, MALOP_MON)
+    -- Sinh viên có thể gửi nhiều yêu cầu nhưng mỗi môn chỉ được 3 lần cho mỗi cột điểm
+    CONSTRAINT U_PHUCKHAO UNIQUE (MA_SINHVIEN, MALOP_MON, COT_DIEM)
+    
 );
 
 -- Triggers
@@ -344,5 +345,4 @@ INSERT INTO DOT VALUE (NULL, CURRENT_TIMESTAMP(), DATE_ADD(CURRENT_TIMESTAMP(), 
 
 INSERT INTO PHUC_KHAO VALUE (NULL, "1742005", "18HCB-CTT001", 2, 9, "Thầy/Cô xem giúp em điểm cuối kì.", '2020-06-11 23:59:00', NULL, 1);
 INSERT INTO PHUC_KHAO VALUE (NULL, "1842004", "18HCB-CTT002", 2, 9, "Thầy/Cô xem giúp em điểm cuối kì.", '2020-06-11 23:59:00', NULL, 1);
-
 

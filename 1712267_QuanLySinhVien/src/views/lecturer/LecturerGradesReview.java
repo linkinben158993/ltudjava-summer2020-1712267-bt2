@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -12,8 +13,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import dao.DiemDao;
 import dao.PhucKhaoDao;
 import dao.SinhVienDao;
+import entity.Diem;
 import entity.GiaoVu;
 import entity.PhucKhao;
 import entity.SinhVien;
@@ -47,7 +50,7 @@ public class LecturerGradesReview extends JDialog {
 
 	public static void main(String[] args) {
 		try {
-			LecturerGradesReview dialog = new LecturerGradesReview(new GiaoVu());
+			LecturerGradesReview dialog = new LecturerGradesReview(new GiaoVu(), new JFrame());
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -55,7 +58,8 @@ public class LecturerGradesReview extends JDialog {
 		}
 	}
 
-	public LecturerGradesReview(GiaoVu giaoVu) {
+	public LecturerGradesReview(GiaoVu giaoVu, JFrame preFrame) {
+
 		updateList = new HashMap<Integer, Integer>();
 
 		setBounds(100, 100, 800, 320);
@@ -86,7 +90,38 @@ public class LecturerGradesReview extends JDialog {
 				okButton.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
+						int[] selected = tblRequestGrades.getSelectedRows();
+						if (selected.length == 0) {
+							JOptionPane.showMessageDialog(null, "Chưa chọn yêu cầu!");
+						} else {
+							for (int i : selected) {
+								DiemDao diemDao = new DiemDao();
 
+								Diem diem = new Diem();
+								diem.set_mssv(tblRequestGrades.getModel().getValueAt(i, 1).toString());
+								diem.setMaLop_mon(tblRequestGrades.getModel().getValueAt(i, 3).toString());
+								Diem foundDiem = new Diem().findByMSSV_LopMon(diemDao.findAll(), diem);
+
+								if (foundDiem == null) {
+									JOptionPane.showMessageDialog(null, "Không tìm thấy điểm của sinh viên!");
+								} else {
+									boolean pass = diemDao.update(foundDiem.get_diemNo(),
+											Integer.parseInt(tblRequestGrades.getModel().getValueAt(i, 4).toString()),
+											Float.parseFloat(tblRequestGrades.getModel().getValueAt(i, 5).toString()));
+									if (pass) {
+										JOptionPane.showMessageDialog(null, "Cập nhật điểm thành công!");
+										PhucKhaoDao phucKhaoDao = new PhucKhaoDao();
+										phucKhaoDao.updateStatusToApproved(updateList.get(Integer
+												.parseInt(tblRequestGrades.getModel().getValueAt(i, 0).toString())));
+										preFrame.invalidate();
+										preFrame.validate();
+										preFrame.repaint();
+									} else {
+										JOptionPane.showMessageDialog(null, "Không tìm thấy điểm của sinh viên!");
+									}
+								}
+							}
+						}
 					}
 				});
 				okButton.setActionCommand("Duyệt");
@@ -106,8 +141,10 @@ public class LecturerGradesReview extends JDialog {
 								PhucKhaoDao phucKhaoDao = new PhucKhaoDao();
 								phucKhaoDao.updateStatusToSeen(updateList.get(
 										Integer.parseInt(tblRequestGrades.getModel().getValueAt(i, 0).toString())));
+								contentPanel.validate();
+								contentPanel.repaint();
 							}
-							repaint();
+
 						}
 					}
 				});

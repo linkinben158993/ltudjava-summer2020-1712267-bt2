@@ -27,6 +27,8 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -44,10 +46,19 @@ import java.awt.event.ItemEvent;
 public class LecturerGrades extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private JFrame curFrame;
 	private JPanel contentPane;
 	private GenericStuff genericStuff = new GenericStuff();
 
 	private GiaoVu giaoVu;
+
+	public JFrame getCurFrame() {
+		return curFrame;
+	}
+
+	public void setCurFrame(JFrame curFrame) {
+		this.curFrame = curFrame;
+	}
 
 	public int draggedAtX;
 	public int draggedAtY;
@@ -90,8 +101,8 @@ public class LecturerGrades extends JFrame {
 
 	public LecturerGrades(GiaoVu giaoVu) {
 		this.giaoVu = giaoVu;
-
 		init();
+		this.curFrame = (JFrame) SwingUtilities.getWindowAncestor(contentPane);
 
 		// Lấy vị trí hiện tại của con trỏ JFrame
 		addMouseListener(new MouseAdapter() {
@@ -338,7 +349,7 @@ public class LecturerGrades extends JFrame {
 		lblIconPhucKhao.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				LecturerGradesReview lecturerGradesReview = new LecturerGradesReview(giaoVu);
+				LecturerGradesReview lecturerGradesReview = new LecturerGradesReview(giaoVu, curFrame);
 				genericStuff.call_dialog(lecturerGradesReview);
 			}
 		});
